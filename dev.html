@@ -7,13 +7,51 @@
     <title>开发场景</title>
     <link rel="stylesheet" type="text/css" href="./import/element-ui/element.css">
 </head>
+<style>
+    .container-left {
+        height: 100%;
+        width: 360px;
+        float: left;
+        overflow-y: auto;
+        border-right: 2px black solid;
+    }
+
+    .container-right {
+        height: 100%;
+        width: calc(100% - 362px);
+        float: right;
+        overflow: auto;
+    }
+
+    .container-right::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    .container-right::-webkit-scrollbar-thumb {
+        background-color: gray;
+    }
+
+    .container-right::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    
+</style>
 
 <body>
     <div id="app">
         <el-tabs v-model="activeTabName" :stretch="true" :lazy="true">
-            <el-tab-pane label="组件" name="组件">
-                <div>
-
+            <el-tab-pane label="COMPONENT" name="COMPONENT">
+                <div :style="{height: containerHeight}">
+                    <div class="container-left">
+                        <div></div>
+                    </div>
+                    <div class="container-right">
+                        <div id="COMPONENT-graphs">
+                            
+                        </div>
+                    </div>
                 </div>
             </el-tab-pane>
         </el-tabs>
@@ -30,8 +68,19 @@
         el: '#app',
         data: function () {
             return {
-                activeTabName: "组件"
+                activeTabName: "COMPONENT",
+                windowHeight: window.innerHeight
             }
+        },
+        computed: {
+            containerHeight: function () {
+                return (this.windowHeight - 70) + 'px';
+            }
+        },
+        mounted() {
+            window.addEventListener("resize", (event) => {
+                this.windowHeight = window.innerHeight;
+            }, false);
         }
     })
 </script>

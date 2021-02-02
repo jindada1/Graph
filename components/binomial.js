@@ -3,20 +3,28 @@
  */
 Vue.component('gh-binomial', {
     template: '\
-        <canvas ref="board" :width="width" :height="height" style="background-color:gray">\
-        </canvas>\
+        <div :style="{height: containerHeight}">\
+            <div class="container-left">\
+                <div></div>\
+            </div>\
+            <div class="container-right">\
+                <div id="binomial-graphs"></div>\
+            </div>\
+        </div>\
     ',
     data() {
         return {
-            width: 300,
-            height: 300
+            windowHeight: window.innerHeight
         }
     },
     computed: {
-    },
-    methods: {
+        containerHeight: function () {
+            return (this.windowHeight - 70) + 'px';
+        }
     },
     mounted() {
-        console.log('binomial mounted');
+        window.addEventListener("resize", (event) => {
+            this.windowHeight = window.innerHeight;
+        }, false);
     }
 })

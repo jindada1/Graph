@@ -1,0 +1,27 @@
+.container-left {
+    height: 100%;
+    width: 360px;
+    float: left;
+    overflow-y: auto;
+    border-right: 2px black solid;
+}
+
+.container-right {
+    height: 100%;
+    width: calc(100% - 362px);
+    float: right;
+    overflow: auto;
+}
+
+.container-right::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.container-right::-webkit-scrollbar-thumb {
+    background-color: gray;
+}
+
+.container-right::-webkit-scrollbar-track {
+    background-color: transparent;
+}
