@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率分布可视化</title>
+    <link rel="stylesheet" type="text/css" href="./import/element-ui/element.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <el-tabs v-model="activeTabName" :stretch="true" :lazy="true">
+            <el-tab-pane v-for="tab in tabs" :key="tab.label" :label="tab.label" :name="tab.name">
+                <component :is="tab.component"></component>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+</body>
+
+<!-- import Vue before Element -->
+<script src="./import/vue.js"></script>
+<!-- import JavaScript -->
+<script src="./import/element-ui/element.js"></script>
+
+<!-- use configurations -->
+<script src="./config.js"></script>
+
+<!-- use components -->
+<script src="./components/coins.js"></script>
+<script src="./components/hundred.js"></script>
+<script src="./components/binomial.js"></script>
+<script src="./components/jointdensity.js"></script>
+
+<!-- run main scripts -->
+<script>
+    const tabs = configurations.tabs;
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                tabs: tabs,
+                activeTabName: tabs.length ? tabs[0].name : null
+            }
+        }
+    })
+</script>
+</html>
