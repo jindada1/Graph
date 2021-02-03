@@ -6,37 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>开发场景</title>
     <link rel="stylesheet" type="text/css" href="./import/element-ui/element.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/index.css">
 </head>
 <style>
-    .container-left {
-        height: 100%;
-        width: 360px;
-        float: left;
-        overflow-y: auto;
-        border-right: 2px black solid;
-    }
 
-    .container-right {
-        height: 100%;
-        width: calc(100% - 362px);
-        float: right;
-        overflow: auto;
-    }
-
-    .container-right::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-    }
-
-    .container-right::-webkit-scrollbar-thumb {
-        background-color: gray;
-    }
-
-    .container-right::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
-    
 </style>
 
 <body>
@@ -45,11 +18,32 @@
             <el-tab-pane label="COMPONENT" name="COMPONENT">
                 <div :style="{height: containerHeight}">
                     <div class="container-left">
-                        <div></div>
+                        <div class="control-panel">
+                            <el-divider content-position="center">柱状图属性</el-divider>
+                            <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色"></kris-color-picker>
+                            <kris-color-picker v-model="histogramConfig.barStrokeColor" title="边缘颜色"></kris-color-picker>
+                            <el-divider content-position="center">画笔粗细</el-divider>
+                            <!-- <el-slider v-model="lineWidth" :min="1" :max="maxLineWidth" @change="widthChanged"> -->
+                            </el-slider>
+                        </div>
                     </div>
                     <div class="container-right">
-                        <div id="COMPONENT-graphs">
-                            
+                        <div id="COMPONENT-graph-maze" class="graph-maze">
+                            <div class="graph-maze-row graph-maze-sticky-head-top">
+                                <div class="graph-maze-sticky-head-left"></div>
+                                <div v-for="(p, c) in probabilities" class="graph-maze-element-container"
+                                    v-bind:style="elementStyle">
+                                    <div v-bind:style="'text-align: ' + getAlign(c, probabilities)">{{p}}</div>
+                                </div>
+                            </div>
+                            <div v-for="(row, r) in dataMaze" :key="r" class="graph-maze-row">
+                                <div class="graph-maze-sticky-head-left">{{r + 1}}</div>
+                                <div v-for="(graph, c) in row" :key="coordinateKey(r, c)"
+                                    class="graph-maze-element-container" v-bind:style="elementStyle">
+                                    <canvas v-bind:class="'graph-maze-element-' + getAlign(c, row)"
+                                        :id="coordinateKey(r, c)"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -63,24 +57,89 @@
 <!-- import JavaScript -->
 <script src="./import/element-ui/element.js"></script>
 
+<script src="components/el-tools.js"></script>
+
+<script src="./static/js/chart.js"></script>
+<script src="./static/js/math.js"></script>
+<script src="./config.js"></script>
+
 <script>
     new Vue({
         el: '#app',
         data: function () {
             return {
                 activeTabName: "COMPONENT",
-                windowHeight: window.innerHeight
+                windowHeight: window.innerHeight,
+                dataMaze: [],
+                probabilities: [0.125, 0.25, 0.4, 0.5, 0.6, 0.75, 0.875],
+                trials: 8,
+                marginX: 10,
+                rowDistance: 10,
+                histogramConfig: {
+                    barColor: "#8E8E8E",
+                    barStrokeColor: "#000000",
+                    height: 180,
+                    maxWidth: 200,
+                    maxBarWidth: 30
+                },
+                lovingVue: "#8E8E8E"
             }
         },
         computed: {
             containerHeight: function () {
-                return (this.windowHeight - 70) + 'px';
+                return (this.windowHeight - 70) + "px";
+            },
+            elementStyle: function () {
+                return {
+                    margin: this.rowDistance + "px " + this.marginX + "px"
+                }
+            },
+        },
+        methods: {
+            coordinateKey(r, c) {
+                return r.toString() + "," + c.toString();
+            },
+            getAlign(c, row) {
+                if (c < (row.length - 1) / 2)
+                    return "left";
+                else if (c === (row.length - 1) / 2)
+                    return "center";
+                else
+                    return "right";
+            },
+            render() {
+                for (let [r, row] of this.dataMaze.entries()) {
+                    for (let [c, data] of row.entries()) {
+                        histogram(document.getElementById(this.coordinateKey(r, c)), {}).draw(data);
+                    }
+                }
+            },
+            calculateData() {
+                var data = [];
+                for (let trial = 1; trial < this.trials; trial++) {
+                    let row = []
+                    for (let p of this.probabilities) {
+                        row.push({
+                            datas: binominalExperience(trial, p)
+                        })
+                    }
+                    data.push(row);
+                }
+                return data;
+            },
+            display(datas) {
+                this.dataMaze = this.calculateData();
+                Vue.nextTick(() => {
+                    this.render();
+                })
             }
         },
         mounted() {
             window.addEventListener("resize", (event) => {
                 this.windowHeight = window.innerHeight;
             }, false);
+
+            this.display();
         }
     })
 </script>
