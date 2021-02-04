@@ -22,7 +22,16 @@ function histogram(canvasElement, conf) {
         maxWidth: 200,
         maxBarWidth: 30,
         padx: 2,
-        pady: 2
+        pady: 4,
+        precise: 0.0000001,
+        axisX: true,
+        axisXNum: false,
+        axisXStep: 1,
+        axisY: true,
+        axisYNum: false,
+        axisYStepNum: 1,
+        tickMark: 4,
+        tickNumFont: "12px serif"
     }
 
     for (var key in conf) {
@@ -69,25 +78,57 @@ function histogram(canvasElement, conf) {
         heightPerValue = innerHeight / maxValue;
     }
 
-    function drawAxis(data) {
-        context.strokeStyle = config["barStrokeColor"];
-        drawLine(config.padx, cHeight - config.pady, cWidth - config.padx, cHeight - config.pady)
-        for (let i = 0; i < data.datas.length; i++) {
-            let x = i * barWidth + barWidth / 2;
-            drawLine(x, cHeight - config.pady, x, cHeight);
-        }
+    function drawAxisXTickNumber(num, x, y) {
+        if (!config.axisXNum) return;
+        context.font = config.tickNumFont;
+        context.textAlign = "center";
+        context.textBaseline = "top";
+        context.fillText(num.toString(), x, y);
     }
 
-    function mapX(bar, value) {
+    function drawAxisYTickNumber(num, x, y) {
+        if (!config.axisXNum) return;
+        context.font = config.tickNumFont;;
+        context.textAlign = "right";
+        context.textBaseline = "middle";
+        context.fillText((num.toFixed(2)).toString(), x, y);
+    }
+
+    function drawAxis(data) {
+        context.strokeStyle = config["barStrokeColor"];
+        let lineWidth = context.lineWidth;
+        context.lineWidth = 1;
+        if (config.axisX) {
+            drawLine(config.padx, cHeight - config.pady, cWidth - config.padx, cHeight - config.pady)
+            for (let i = 0; i < data.datas.length; i += config.axisXStep) {
+                let x = config.padx + i * barWidth + barWidth / 2;
+                drawLine(x, cHeight - config.pady, x, cHeight - config.pady + config.tickMark);
+                drawAxisXTickNumber(i, x, cHeight - config.pady + config.tickMark);
+            }
+        }
+        if (config.axisY) {
+            drawLine(config.padx, config.pady, config.padx, cHeight - config.pady)
+            let t = 0;
+            while(mapY(t) > config.pady) {
+                let y = mapY(t);
+                drawLine(config.padx, y, config.padx - config.tickMark, y);
+                drawAxisYTickNumber(t, config.padx - config.tickMark * 2, y)
+                t += config.axisYStepNum
+            }
+        }
+        context.lineWidth = lineWidth;
+    }
+
+    function mapX(bar) {
         return config['padx'] + bar * barWidth;
     }
 
-    function mapY(bar, value) {
+    function mapY(value) {
         return cHeight - config['pady'] - mapH(value);
     }
 
     function mapH(value) {
-        return parseInt(value * heightPerValue)
+        return value > config.precise ? parseInt(value * heightPerValue) : 0;
     }
 
     function drawBars(data) {
@@ -98,8 +139,8 @@ function histogram(canvasElement, conf) {
         for (let [i, value] of values.entries()) {
             let w = barWidth - 1
             let h = mapH(value)
-            let y = mapY(i, value)
-            let x = mapX(i, value)
+            let y = mapY(value)
+            let x = mapX(i)
             context.strokeRect(x, y, w, h)
             context.fillRect(x, y, w, h);
         }

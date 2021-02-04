@@ -21,9 +21,9 @@ Vue.component('gh-binomial', {
                 </div>
             </div>
             <div class="container-right kris-scroll">
-                <div id="COMPONENT-graph-maze" class="graph-maze">
+                <div class="graph-maze">
                     <div class="graph-maze-row graph-maze-sticky-head-top">
-                        <div class="graph-maze-sticky-head-left"></div>
+                        <div class="graph-maze-head sticky-left"></div>
                         <div v-for="(p, c) in experiment.probabilities" class="graph-maze-element-container" v-bind:style="elementStyle">
                             <div v-bind:style="'text-align: ' + getAlign(c, experiment.probabilities)">
                                 {{p}}
@@ -31,7 +31,7 @@ Vue.component('gh-binomial', {
                         </div>
                     </div>
                     <div v-for="(row, r) in dataMaze" :key="r" class="graph-maze-row">
-                        <div class="graph-maze-sticky-head-left">{{r + experiment.trialsRange[0]}}</div>
+                        <div class="graph-maze-head sticky-left">{{r + experiment.trialsRange[0]}}</div>
                         <div v-for="(graph, c) in row" :key="coordinateKey(r, c)"
                             class="graph-maze-element-container" v-bind:style="elementStyle">
                             <canvas v-bind:class="'graph-maze-element-' + getAlign(c, row)" :id="coordinateKey(r, c)"></canvas>
@@ -43,18 +43,20 @@ Vue.component('gh-binomial', {
     `,
     data() {
         return {
+            componentName: "gh-binomial",
             windowHeight: window.innerHeight,
             dataMaze: [],
             experiment: {
-                probabilities: [0.125, 0.25, 0.4, 0.5, 0.6, 0.75, 0.875],
+                probabilities: [0.125, 0.25, 0.5, 0.75, 0.875],
                 trialsRange: [1, 8]
             },
             histogramConfig: {
-                barColor: "#8E8E8E",
+                barColor: "#409EFF",
                 barStrokeColor: "#000000",
                 height: 180,
                 maxWidth: 200,
-                maxBarWidth: 30
+                maxBarWidth: 30,
+                axisY: false,
             },
             layout: {
                 marginX: 10,
@@ -88,7 +90,7 @@ Vue.component('gh-binomial', {
     },
     methods: {
         coordinateKey(r, c) {
-            return r.toString() + "," + c.toString();
+            return this.componentName + r.toString() + "," + c.toString();
         },
         getAlign(c, row) {
             if (c < (row.length - 1) / 2)

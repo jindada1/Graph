@@ -51,13 +51,23 @@
     z-index: 100;
 }
 
-.graph-maze-sticky-head-left {
-    width: 40px;
+.graph-maze-head {
+    width: 50px;
     flex: none;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.sticky-left {
     left: 0;
+    position: sticky;
+    position: -webkit-sticky;
+    background-color: white;
+}
+
+.sticky-right {
+    right: 0;
     position: sticky;
     position: -webkit-sticky;
     background-color: white;

@@ -167,7 +167,7 @@ Vue.component('kris-tag-group', {
         isValid(val) {
             let fval = parseFloat(val);
             if (!fval || fval < 0 || fval > 1) {
-                this.$message.error("请输入在 [0, 1] 范围内的概率");
+                this.$message.error("请输入在 (0, 1] 范围内的概率");
                 return false;
             }
             if (this.dynamicTags.indexOf(fval) > -1) {
