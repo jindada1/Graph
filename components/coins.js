@@ -42,6 +42,7 @@ Vue.component('gh-coins', {
     data() {
         return {
             componentName: "gh-coins",
+            inited: false,
             windowHeight: window.innerHeight,
             dataMaze: [],
             experiment: {
@@ -139,6 +140,11 @@ Vue.component('gh-coins', {
         },
         storeSettings() {
             /** Cookie */
+        },
+        init() {
+            if (this.inited) return;
+            this.display();
+            this.inited = true;
         }
     },
     mounted() {

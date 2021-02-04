@@ -35,8 +35,8 @@ function Combination(M, n) {
  * @param {number} exponent exponent, should be natural number
  */
 function power(base, exponent) {
-    if(exponent === 0) return 1;
-    if(base === 0) return 0;
+    if (exponent === 0) return 1;
+    if (base === 0) return 0;
 
     let result = 1;
     for (let i = 0; i < exponent; i++)
@@ -70,3 +70,27 @@ function binominalExperience(numTrials, propertySucc) {
     }
     return result;
 }
+
+/**
+ * Gaussian distribution generator
+ * Reference : https://stackoverflow.com/questions/35356343/html5-draw-gaussian-function-using-beziercurveto
+ * 
+ * @param {Float} mean 均值
+ * @param {Float} std  标准差
+ */
+var Gaussian = function (mean, std) {
+    var mean = mean;
+    var std = std;
+    var a = 1 / Math.sqrt(2 * Math.PI);
+
+    return {
+        get: function (x) {
+            var f = a / std;
+            var p = -1 / 2;
+            var c = (x - mean) / std;
+            c *= c;
+            p *= c;
+            return f * Math.pow(Math.E, p);
+        }
+    }
+};

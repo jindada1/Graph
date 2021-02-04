@@ -42,7 +42,8 @@ Vue.component('kris-slider', {
                 <span>{{title}}</span>
                 <span style="float: right;">{{sliderValue}}</span>
             </div>
-            <el-slider v-model="sliderValue" :min="1" :max="100" @input="sliderValueChanging" :show-tooltip="false">
+            <el-slider v-model="sliderValue" @input="sliderValueChanging" :show-tooltip="false"
+                :min="min" :max="max" :step="step">
             </el-slider>
         </div>
     `,
@@ -55,6 +56,10 @@ Vue.component('kris-slider', {
         },
         max: {
             default: 100,
+            type: Number
+        },
+        step: {
+            default: 1,
             type: Number
         }
     },
@@ -190,15 +195,23 @@ Vue.component('kris-num-input-range', {
     <div class="el-tools-item">
         <span class="el-tools-item-head">{{title}}</span>
         <el-input v-model="from" class="el-tools-item-tag" placeholder="1" size="medium"
-            @keyup.enter.native="handleInputConfirmFrom"></el-input>
+            @keyup.enter.native="handleInputConfirm"></el-input>
         <span style="line-height: 40px;margin: 0 10px;">-</span>
         <el-input v-model="to" class="el-tools-item-tag" placeholder="10" size="medium"
-            @keyup.enter.native="handleInputConfirmTo"></el-input>
+            @keyup.enter.native="handleInputConfirm"></el-input>
     </div>
     `,
     props: {
         title: String,
         value: Array,
+        min: {
+            default: -Infinity,
+            type: Number
+        },
+        max: {
+            default: Infinity,
+            type: Number
+        }
     },
     data() {
         return {
@@ -207,27 +220,23 @@ Vue.component('kris-num-input-range', {
         }
     },
     methods: {
-        handleInputConfirmFrom() {
-            let inputValue = this.from;
-            if (this.isValid(inputValue)) {
-                this.from = parseInt(inputValue);
-                this.tryEmit();
-            }
-        },
-        handleInputConfirmTo() {
-            let inputValue = this.to;
-            if (this.isValid(inputValue)) {
-                this.to = parseInt(inputValue);
+        handleInputConfirm() {
+            if (this.isValid(this.from) && this.isValid(this.to)) {
+                this.from = parseInt(this.from);
+                this.to = parseInt(this.to);
                 this.tryEmit();
             }
         },
         isValid(val) {
             let ival = parseInt(val);
-            if (!ival || ival < 1) {
-                this.$message.error("请输入大于 0 的自然数");
+            if ((!ival && ival != 0) || ival < this.min || ival > this.max) {
+                this.$message.error("输入应在范围 " + this.fmtRange() + " 内");
                 return false;
             }
             return true
+        },
+        fmtRange() {
+            return "[" + (this.min === -Infinity ? "-∞" : this.min) + ", " + (this.max === Infinity ? "+∞" : this.max) + "]"
         },
         tryEmit() {
             if (this.from <= this.to) {
@@ -235,6 +244,54 @@ Vue.component('kris-num-input-range', {
             }
             else
                 this.$message.error("起点应该小于终点");
+        }
+    },
+    watch: {
+        value(value) {
+            this.from = value[0];
+            this.to = value[1];
+        }
+    }
+})
+
+Vue.component('kris-num-input-double', {
+    template: `
+    <div class="el-tools-item">
+        <span class="el-tools-item-head">{{title}}</span>
+        <span class="el-tools-item-head">{{names[0]}}</span>
+        <el-input v-model="from" class="el-tools-item-tag" placeholder="0" size="medium"
+            @keyup.enter.native="handleInputConfirm"></el-input>
+        <span class="el-tools-item-head">{{names[1]}}</span>
+        <el-input v-model="to" class="el-tools-item-tag" placeholder="1" size="medium"
+            @keyup.enter.native="handleInputConfirm"></el-input>
+    </div>
+    `,
+    props: {
+        title: String,
+        names: Array,
+        value: Array
+    },
+    data() {
+        return {
+            from: this.value[0],
+            to: this.value[1],
+        }
+    },
+    methods: {
+        handleInputConfirm() {
+            if (this.isValid(this.from) && this.isValid(this.to)) {
+                this.from = parseFloat(this.from);
+                this.to = parseFloat(this.to);
+                this.$emit('input', [this.from, this.to]);
+            }
+        },
+        isValid(val) {
+            let ival = parseFloat(val);
+            if (!ival && ival != 0) {
+                this.$message.error("输入不合法");
+                return false;
+            }
+            return true
         }
     },
     watch: {

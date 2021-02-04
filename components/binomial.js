@@ -8,7 +8,7 @@ Vue.component('gh-binomial', {
                 <div class="control-panel">
                     <el-divider content-position="center">实验设置</el-divider>
                     <kris-tag-group v-model="experiment.probabilities" title="成功率数组"></kris-tag-group>
-                    <kris-num-input-range v-model="experiment.trialsRange" title="实验数范围"></kris-num-input-range>
+                    <kris-num-input-range v-model="experiment.trialsRange" title="实验数范围" :min="1"></kris-num-input-range>
                     <el-divider content-position="center">柱状图属性</el-divider>
                     <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色"></kris-color-picker>
                     <kris-color-picker v-model="histogramConfig.barStrokeColor" title="边缘颜色"></kris-color-picker>
@@ -16,8 +16,8 @@ Vue.component('gh-binomial', {
                     <kris-num-input v-model="histogramConfig.maxWidth" title="图最大宽度" :step="5"></kris-num-input>
                     <kris-num-input v-model="histogramConfig.maxBarWidth" title="柱最大宽度" :step="2"></kris-num-input>
                     <el-divider content-position="center">布局</el-divider>
-                    <kris-slider v-model="layout.rowDistance" :title="'行间距'"></kris-slider>
-                    <kris-slider v-model="layout.marginX" :title="'列间距'"></kris-slider>
+                    <kris-slider v-model="layout.rowDistance" title="行间距"></kris-slider>
+                    <kris-slider v-model="layout.marginX" title="列间距"></kris-slider>
                 </div>
             </div>
             <div class="container-right kris-scroll">
@@ -45,6 +45,7 @@ Vue.component('gh-binomial', {
         return {
             componentName: "gh-binomial",
             windowHeight: window.innerHeight,
+            inited: false,
             dataMaze: [],
             experiment: {
                 probabilities: [0.125, 0.25, 0.5, 0.75, 0.875],
@@ -129,6 +130,11 @@ Vue.component('gh-binomial', {
         },
         storeSettings() {
             /** Cookie */
+        },
+        init() {
+            if (this.inited) return;
+            this.display();
+            this.inited = true;
         }
     },
     mounted() {
