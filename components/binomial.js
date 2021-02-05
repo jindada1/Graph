@@ -52,7 +52,7 @@ Vue.component('gh-binomial', {
                 trialsRange: [1, 8]
             },
             histogramConfig: {
-                barColor: "#409EFF",
+                barColor: "#88C3FF",
                 barStrokeColor: "#000000",
                 height: 180,
                 maxWidth: 200,

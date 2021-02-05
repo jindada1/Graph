@@ -51,7 +51,7 @@ Vue.component('gh-coins', {
                 probability: 0.5
             },
             histogramConfig: {
-                barColor: "#409EFF",
+                barColor: "#88C3FF",
                 barStrokeColor: "#000000",
                 height: 100,
                 maxWidth: 1000,

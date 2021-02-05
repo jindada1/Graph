@@ -47,7 +47,7 @@ Vue.component('gh-hundred', {
                 trials: 100
             },
             histogramConfig: {
-                barColor: "#409EFF",
+                barColor: "#88C3FF",
                 barStrokeColor: "#000000",
                 height: 100,
                 maxWidth: 1000,

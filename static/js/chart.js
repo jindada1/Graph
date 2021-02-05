@@ -95,8 +95,9 @@ function histogram(canvasElement, conf) {
     }
 
     function drawAxis(data) {
-        context.strokeStyle = config["barStrokeColor"];
+        let strokeStyle = context.strokeStyle;
         let lineWidth = context.lineWidth;
+        context.strokeStyle = "#000000";
         context.lineWidth = 1;
         if (config.axisX) {
             drawLine(config.padx, cHeight - config.pady, cWidth - config.padx, cHeight - config.pady)
@@ -117,6 +118,7 @@ function histogram(canvasElement, conf) {
             }
         }
         context.lineWidth = lineWidth;
+        context.strokeStyle = strokeStyle;
     }
 
     function mapX(bar) {
@@ -141,6 +143,7 @@ function histogram(canvasElement, conf) {
             let h = mapH(value)
             let y = mapY(value)
             let x = mapX(i)
+            if(h < 1) continue;
             context.strokeRect(x, y, w, h)
             context.fillRect(x, y, w, h);
         }

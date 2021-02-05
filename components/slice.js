@@ -50,8 +50,8 @@ Vue.component('gh-slice', {
             },
             plotConfig: {
                 precise: 0.2,
-                minColor: "#EEEEEE",
-                maxColor: "#999999",
+                minColor: "#D9ECFF",
+                maxColor: "#409EFF",
             },
             slices: {
                 x: [-2, -1, 0, 1, 2],

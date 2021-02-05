@@ -13,6 +13,17 @@
     flex-grow: 1;
 }
 
+.el-tools-item-content {
+    max-width: 220px; 
+    display: flex;
+}
+
+.el-tools-item-content > span {
+    line-height: 40px;
+    margin: 0 10px;
+    flex: none;
+}
+
 .el-tools-item-tag {
     margin: 5px;
 }
