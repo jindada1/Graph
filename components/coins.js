@@ -7,7 +7,7 @@ Vue.component('gh-coins', {
             <div class="container-left kris-scroll">
                 <div class="control-panel">
                     <el-divider content-position="center">实验设置</el-divider>
-                    <kris-tag-group v-model="experiment.trials" title="实验次数"></kris-tag-group>
+                    <kris-tag-group v-model="experiment.trials" title="实验次数" :min="0"></kris-tag-group>
                     <kris-num-input v-model="experiment.maxX" title="横坐标最大值" :step="10"></kris-num-input>
                     <el-divider content-position="center">柱状图属性</el-divider>
                     <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色">

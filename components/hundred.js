@@ -7,7 +7,7 @@ Vue.component('gh-hundred', {
             <div class="container-left kris-scroll">
                 <div class="control-panel">
                     <el-divider content-position="center">实验设置</el-divider>
-                    <kris-tag-group v-model="experiment.probabilities" title="成功率数组"></kris-tag-group>
+                    <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
                     <el-divider content-position="center">柱状图属性</el-divider>
                     <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色">
                     </kris-color-picker>

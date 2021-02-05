@@ -121,8 +121,8 @@ Vue.component('kris-tag-group', {
     template: `
         <div class="el-tools-item" style="display: flex">
             <span class="el-tools-item-head">{{title}}</span>
-            <div>
-                <el-tag :key="tag" v-for="tag in dynamicTags" closable :disable-transitions="false"
+            <div style="text-align: right;">
+                <el-tag :key="tag" v-for="tag in tags" closable :disable-transitions="false"
                     @close="handleClose(tag)" class="el-tools-item-tag">
                     {{tag}}
                 </el-tag>
@@ -138,18 +138,30 @@ Vue.component('kris-tag-group', {
     props: {
         title: String,
         value: Array,
+        min: {
+            default: -Infinity,
+            type: Number
+        },
+        max: {
+            default: Infinity,
+            type: Number
+        },
+        sorted: {
+            default: true,
+            type: Boolean
+        }
     },
     data() {
         return {
-            dynamicTags: this.value,
+            tags: this.value,
             inputVisible: false,
             inputValue: ''
         }
     },
     methods: {
         handleClose(tag) {
-            this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-            this.$emit('input', this.dynamicTags);
+            this.tags.splice(this.tags.indexOf(tag), 1);
+            this.$emit('input', this.tags);
         },
         showInput() {
             this.inputVisible = true;
@@ -160,31 +172,40 @@ Vue.component('kris-tag-group', {
         handleInputConfirm() {
             let inputValue = this.inputValue;
             if (this.isValid(inputValue)) {
-                this.dynamicTags.push(parseFloat(inputValue));
-                this.$emit('input', this.dynamicTags);
+                this.addValue(parseFloat(inputValue));
+                this.$emit('input', this.tags);
             }
             this.inputVisible = false;
             this.inputValue = '';
+        },
+        addValue(val) {
+            this.tags.push(val);
+            if (this.sorted) {
+                this.tags.sort((a, b) => a - b);
+            }
         },
         handleBlur() {
             this.inputVisible = false;
         },
         isValid(val) {
             let fval = parseFloat(val);
-            if (!fval || fval < 0 || fval > 1) {
-                this.$message.error("请输入在 (0, 1] 范围内的概率");
+            if ((!fval && fval != 0) || fval < this.min || fval > this.max) {
+                this.$message.error("输入应在范围 " + this.fmtRange() + " 内");
                 return false;
             }
-            if (this.dynamicTags.indexOf(fval) > -1) {
-                this.$message.error("已存在概率：" + val);
+            if (this.tags.indexOf(fval) > -1) {
+                this.$message.error("已存在：" + val);
                 return false;
             }
             return true
-        }
+        },
+        fmtRange() {
+            return "[" + (this.min === -Infinity ? "-∞" : this.min) + ", " + (this.max === Infinity ? "+∞" : this.max) + "]"
+        },
     },
     watch: {
         value(value) {
-            this.dynamicTags = value;
+            this.tags = value;
         }
     }
 })

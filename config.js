@@ -21,6 +21,11 @@ const configurations = {
             component: "gh-jointdensity",
             label: "联合概率密度",
         },
+        {
+            name: "slice",
+            component: "gh-slice",
+            label: "二元函数切片",
+        },
     ]
 }
 

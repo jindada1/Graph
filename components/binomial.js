@@ -7,7 +7,7 @@ Vue.component('gh-binomial', {
             <div class="container-left kris-scroll">
                 <div class="control-panel">
                     <el-divider content-position="center">实验设置</el-divider>
-                    <kris-tag-group v-model="experiment.probabilities" title="成功率数组"></kris-tag-group>
+                    <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
                     <kris-num-input-range v-model="experiment.trialsRange" title="实验数范围" :min="1"></kris-num-input-range>
                     <el-divider content-position="center">柱状图属性</el-divider>
                     <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色"></kris-color-picker>
@@ -25,7 +25,7 @@ Vue.component('gh-binomial', {
                     <div class="graph-maze-row graph-maze-sticky-head-top">
                         <div class="graph-maze-head sticky-left"></div>
                         <div v-for="(p, c) in experiment.probabilities" class="graph-maze-element-container" v-bind:style="elementStyle">
-                            <div v-bind:style="'text-align: ' + getAlign(c, experiment.probabilities)">
+                            <div v-bind:style="'text-align: ' + getAlign(c)">
                                 {{p}}
                             </div>
                         </div>
@@ -34,7 +34,7 @@ Vue.component('gh-binomial', {
                         <div class="graph-maze-head sticky-left">{{r + experiment.trialsRange[0]}}</div>
                         <div v-for="(graph, c) in row" :key="coordinateKey(r, c)"
                             class="graph-maze-element-container" v-bind:style="elementStyle">
-                            <canvas v-bind:class="'graph-maze-element-' + getAlign(c, row)" :id="coordinateKey(r, c)"></canvas>
+                            <canvas v-bind:class="'graph-maze-element-' + getAlign(c)" :id="coordinateKey(r, c)"></canvas>
                         </div>
                     </div>
                 </div>
@@ -93,10 +93,11 @@ Vue.component('gh-binomial', {
         coordinateKey(r, c) {
             return this.componentName + r.toString() + "," + c.toString();
         },
-        getAlign(c, row) {
-            if (c < (row.length - 1) / 2)
+        getAlign(c) {
+            let p = this.experiment.probabilities[c]
+            if (p < 0.5)
                 return "left";
-            else if (c === (row.length - 1) / 2)
+            else if (p === 0.5)
                 return "center";
             else
                 return "right";

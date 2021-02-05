@@ -1,7 +1,7 @@
 /**
- * 实验场景：联合概率密度
+ * 实验场景：二元函数切片
  */
-Vue.component('gh-jointdensity', {
+Vue.component('gh-slice', {
     template: `
         <div :style="{height: containerHeight}">
             <div class="container-left kris-scroll">
@@ -14,8 +14,11 @@ Vue.component('gh-jointdensity', {
                     </kris-num-input-double>
                     <kris-num-input-double v-model="gaussian.y" :names="gaussian.names" title="Y：">
                     </kris-num-input-double>
+                    <el-divider content-position="center">切片</el-divider>
+                    <kris-tag-group v-model="slices.x" title="X 取值"></kris-tag-group>
+                    <kris-tag-group v-model="slices.y" title="Y 取值"></kris-tag-group>
                     <el-divider content-position="center">图像属性</el-divider>
-                    <kris-slider v-model="plotConfig.precise" title="绘图精度" :min="0.1" :max="1" :step="0.1">
+                    <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.1" :max="1" :step="0.1">
                     </kris-slider>
                     <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
                     </kris-color-picker>
@@ -32,14 +35,10 @@ Vue.component('gh-jointdensity', {
     `,
     data() {
         return {
-            componentName: "gh-jointdensity",
+            componentName: "gh-slice",
             inited: false,
             windowHeight: window.innerHeight,
-            plotlyDatas: {
-                x: [],
-                y: [],
-                z: []
-            },
+            graphs:[],
             range: {
                 x: [-4, 4],
                 y: [-4, 4]
@@ -50,9 +49,13 @@ Vue.component('gh-jointdensity', {
                 y: [0, 1]
             },
             plotConfig: {
-                precise: 0.5,
-                minColor: "#D9ECFF",
-                maxColor: "#409EFF",
+                precise: 0.2,
+                minColor: "#EEEEEE",
+                maxColor: "#999999",
+            },
+            slices: {
+                x: [-2, -1, 0, 1, 2],
+                y: [1, 2],
             }
         }
     },
@@ -75,7 +78,14 @@ Vue.component('gh-jointdensity', {
             },
             deep: true
         },
+        slices: {
+            handler: function () {
+                this.display();
+            },
+            deep: true
+        }
     },
+
     computed: {
         containerHeight: function () {
             return (this.windowHeight - 70) + "px";
@@ -86,16 +96,7 @@ Vue.component('gh-jointdensity', {
             return this.componentName + "-plot";
         },
         render() {
-            Plotly.newPlot(this.plotId(), [{
-                x: this.plotlyDatas.x,
-                y: this.plotlyDatas.y,
-                z: this.plotlyDatas.z,
-                type: 'surface',
-                colorscale: [[0, this.plotConfig.minColor], [1, this.plotConfig.maxColor]],
-                colorbar: {
-                    ticklabelposition: "inside"
-                }
-            }]);
+            Plotly.newPlot(this.plotId(), this.graphs);
             this.storeSettings()
         },
         rangeToArray(range, step = 1) {
@@ -108,17 +109,57 @@ Vue.component('gh-jointdensity', {
         jointGaussian(x, y) {
             return Gaussian(this.gaussian.x[0], this.gaussian.x[1]).get(x) * Gaussian(this.gaussian.y[0], this.gaussian.y[1]).get(y);
         },
-        calculateData() {
-            this.plotlyDatas.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
-            this.plotlyDatas.y = this.rangeToArray(this.range.y, this.plotConfig.precise)
-            this.plotlyDatas.z = [];
-            for (let y of this.plotlyDatas.y) {
+        plotlyDatas(){
+            return {
+                x: [],
+                y: [],
+                z: [],
+                type: 'surface',
+                colorscale: [[0, this.plotConfig.minColor], [1, this.plotConfig.maxColor]],
+                colorbar: {
+                    ticklabelposition: "inside"
+                }
+            }
+        },
+        sliceX(x) {
+            let datas = this.plotlyDatas();
+            datas.x = [x, x];
+            for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
+                datas.y.push(y);
+                datas.z.push([this.jointGaussian(x, y), 0])
+            }
+            this.graphs.push(datas);
+        },
+        sliceY(y) {
+            let datas = this.plotlyDatas();
+            datas.y = [y, y];
+            datas.z = [[], []];
+            for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
+                datas.x.push(x);
+                datas.z[0].push(this.jointGaussian(x, y));
+                datas.z[1].push(0);
+            }
+            this.graphs.push(datas);
+        },
+        calcMainGraph() {
+            let datas = this.plotlyDatas();
+            datas.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
+            datas.y = this.rangeToArray(this.range.y, this.plotConfig.precise)
+            datas.z = [];
+            for (let y of datas.y) {
                 let rowx = []
-                for (let x of this.plotlyDatas.x) {
+                for (let x of datas.x) {
                     rowx.push(this.jointGaussian(x, y));
                 }
-                this.plotlyDatas.z.push(rowx);
+                datas.z.push(rowx);
             }
+            this.graphs.push(datas)
+        },
+        calculateData() {
+            this.graphs.length = 0;
+            this.slices.x.map(x => this.sliceX(x));
+            this.slices.y.map(y => this.sliceY(y));
+            // this.calcMainGraph();
         },
         display() {
             this.calculateData();
