@@ -49,7 +49,7 @@ Vue.component('gh-slice', {
                 y: [0, 1]
             },
             plotConfig: {
-                precise: 0.2,
+                precise: 0.1,
                 minColor: "#D9ECFF",
                 maxColor: "#409EFF",
             },
@@ -143,11 +143,16 @@ Vue.component('gh-slice', {
             this.graphs.push(datas);
         },
         shadowSliceX(x) {
+            // 切片的时候限制 x 和 y 的取值，取值必须大于平均值
+            if (x < this.gaussian.x[0]) {
+                return;
+            }
             let datas = this.plotlyDatas();
             datas.type = "scatter3d";
             datas.mode = "lines";
             datas.name = `x = ${x}`;
-            let px = x > 0 ? this.range.x[1] : this.range.x[0];
+            // let px = x > 0 ? this.range.x[1] : this.range.x[0];
+            let px = this.range.x[0];
             for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
                 datas.x.push(px)
                 datas.y.push(y);
@@ -156,11 +161,16 @@ Vue.component('gh-slice', {
             this.graphs.push(datas);
         },
         shadowSliceY(y) {
+            // 切片的时候限制 x 和 y 的取值，取值必须大于平均值
+            if (y < this.gaussian.y[0]) {
+                return;
+            }
             let datas = this.plotlyDatas();
             datas.type = "scatter3d";
             datas.mode = "lines";
             datas.name = `y = ${y}`;
-            let py = y > 0 ? this.range.y[1] : this.range.y[0];
+            // let py = y > 0 ? this.range.y[1] : this.range.y[0];
+            let py = this.range.y[0];
             for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
                 datas.x.push(x);
                 datas.y.push(py);
