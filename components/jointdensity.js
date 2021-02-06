@@ -17,9 +17,9 @@ Vue.component('gh-jointdensity', {
                     <el-divider content-position="center">图像属性</el-divider>
                     <kris-slider v-model="plotConfig.precise" title="绘图精度" :min="0.1" :max="1" :step="0.1">
                     </kris-slider>
-                    <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
-                    </kris-color-picker>
                     <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色">
+                    </kris-color-picker>
+                    <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
                     </kris-color-picker>
                 </div>
             </div>
@@ -50,7 +50,7 @@ Vue.component('gh-jointdensity', {
                 y: [0, 1]
             },
             plotConfig: {
-                precise: 0.5,
+                precise: 0.1,
                 minColor: "#D9ECFF",
                 maxColor: "#409EFF",
             }

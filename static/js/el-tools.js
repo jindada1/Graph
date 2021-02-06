@@ -217,10 +217,10 @@ Vue.component('kris-num-input-range', {
         <span class="el-tools-item-head">{{title}}</span>
         <div class="el-tools-item-content">
             <el-input v-model="from" class="el-tools-item-tag" placeholder="1" size="medium"
-                @keyup.enter.native="handleInputConfirm"></el-input>
+                @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
             <span>-</span>
             <el-input v-model="to" class="el-tools-item-tag" placeholder="10" size="medium"
-                @keyup.enter.native="handleInputConfirm"></el-input>
+                @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
         </div>
     </div>
     `,
@@ -249,6 +249,9 @@ Vue.component('kris-num-input-range', {
                 this.to = parseInt(this.to);
                 this.tryEmit();
             }
+        },
+        handleBlur() {
+            this.handleInputConfirm();
         },
         isValid(val) {
             let ival = parseInt(val);
@@ -284,10 +287,10 @@ Vue.component('kris-num-input-double', {
         <div class="el-tools-item-content">
             <span style="font-size: 12px;">{{names[0]}}</span>
             <el-input v-model="from" class="el-tools-item-tag" placeholder="0" size="medium"
-                @keyup.enter.native="handleInputConfirm"></el-input>
+                @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
             <span style="font-size: 12px;">{{names[1]}}</span>
             <el-input v-model="to" class="el-tools-item-tag" placeholder="1" size="medium"
-                @keyup.enter.native="handleInputConfirm"></el-input>
+                @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
         </div>
     </div>
     `,
@@ -309,6 +312,9 @@ Vue.component('kris-num-input-double', {
                 this.to = parseFloat(this.to);
                 this.$emit('input', [this.from, this.to]);
             }
+        },
+        handleBlur() {
+            this.handleInputConfirm();
         },
         isValid(val) {
             let ival = parseFloat(val);

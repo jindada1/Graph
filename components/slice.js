@@ -20,9 +20,9 @@ Vue.component('gh-slice', {
                     <el-divider content-position="center">图像属性</el-divider>
                     <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.1" :max="1" :step="0.1">
                     </kris-slider>
-                    <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
-                    </kris-color-picker>
                     <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色">
+                    </kris-color-picker>
+                    <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
                     </kris-color-picker>
                 </div>
             </div>
