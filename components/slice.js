@@ -38,7 +38,7 @@ Vue.component('gh-slice', {
             componentName: "gh-slice",
             inited: false,
             windowHeight: window.innerHeight,
-            graphs:[],
+            graphs: [],
             range: {
                 x: [-4, 4],
                 y: [-4, 4]
@@ -109,7 +109,7 @@ Vue.component('gh-slice', {
         jointGaussian(x, y) {
             return Gaussian(this.gaussian.x[0], this.gaussian.x[1]).get(x) * Gaussian(this.gaussian.y[0], this.gaussian.y[1]).get(y);
         },
-        plotlyDatas(){
+        plotlyDatas() {
             return {
                 x: [],
                 y: [],
@@ -118,7 +118,8 @@ Vue.component('gh-slice', {
                 colorscale: [[0, this.plotConfig.minColor], [1, this.plotConfig.maxColor]],
                 colorbar: {
                     ticklabelposition: "inside"
-                }
+                },
+                showscale: false
             }
         },
         sliceX(x) {
@@ -141,6 +142,32 @@ Vue.component('gh-slice', {
             }
             this.graphs.push(datas);
         },
+        shadowSliceX(x) {
+            let datas = this.plotlyDatas();
+            datas.type = "scatter3d";
+            datas.mode = "lines";
+            datas.name = `x = ${x}`;
+            let px = x > 0 ? this.range.x[1] : this.range.x[0];
+            for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
+                datas.x.push(px)
+                datas.y.push(y);
+                datas.z.push(this.jointGaussian(x, y))
+            }
+            this.graphs.push(datas);
+        },
+        shadowSliceY(y) {
+            let datas = this.plotlyDatas();
+            datas.type = "scatter3d";
+            datas.mode = "lines";
+            datas.name = `y = ${y}`;
+            let py = y > 0 ? this.range.y[1] : this.range.y[0];
+            for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
+                datas.x.push(x);
+                datas.y.push(py);
+                datas.z.push(this.jointGaussian(x, y));
+            }
+            this.graphs.push(datas);
+        },
         calcMainGraph() {
             let datas = this.plotlyDatas();
             datas.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
@@ -157,9 +184,11 @@ Vue.component('gh-slice', {
         },
         calculateData() {
             this.graphs.length = 0;
-            this.slices.x.map(x => this.sliceX(x));
-            this.slices.y.map(y => this.sliceY(y));
-            // this.calcMainGraph();
+            // this.slices.x.map(x => this.sliceX(x));
+            // this.slices.y.map(y => this.sliceY(y));
+            this.slices.x.map(x => this.shadowSliceX(x));
+            this.slices.y.map(y => this.shadowSliceY(y));
+            this.calcMainGraph();
         },
         display() {
             this.calculateData();
