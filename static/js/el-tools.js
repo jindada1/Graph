@@ -6,6 +6,36 @@
  * 对 element-ui 控件的二层封装
  */
 
+Vue.component('kris-layout', {
+    template: `
+    <div :style="{height: containerHeight}">
+        <div class="container-left kris-scroll">
+            <div class="control-panel">
+                <slot name="left"></slot>
+            </div>
+        </div>
+        <div class="container-right kris-scroll">
+            <slot name="right"></slot>
+        </div>
+    </div>
+    `,
+    data() {
+        return {
+            windowHeight: window.innerHeight,
+        }
+    },
+    computed: {
+        containerHeight: function () {
+            return (this.windowHeight - 70) + "px";
+        }
+    },
+    mounted() {
+        window.addEventListener("resize", (event) => {
+            this.windowHeight = window.innerHeight;
+        }, false);
+    }
+})
+
 Vue.component('kris-color-picker', {
     template: `
         <div class="el-tools-item">

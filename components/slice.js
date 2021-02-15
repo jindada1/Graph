@@ -3,41 +3,38 @@
  */
 Vue.component('gh-slice', {
     template: `
-        <div :style="{height: containerHeight}">
-            <div class="container-left kris-scroll">
-                <div class="control-panel">
-                    <el-divider content-position="center">取值范围</el-divider>
-                    <kris-num-input-range v-model="range.x" title="X："></kris-num-input-range>
-                    <kris-num-input-range v-model="range.y" title="Y："></kris-num-input-range>
-                    <el-divider content-position="center">高斯分布</el-divider>
-                    <kris-num-input-double v-model="gaussian.x" :names="gaussian.names" title="X：">
-                    </kris-num-input-double>
-                    <kris-num-input-double v-model="gaussian.y" :names="gaussian.names" title="Y：">
-                    </kris-num-input-double>
-                    <el-divider content-position="center">切片</el-divider>
-                    <kris-tag-group v-model="slices.x" title="X 取值"></kris-tag-group>
-                    <kris-tag-group v-model="slices.y" title="Y 取值"></kris-tag-group>
-                    <el-divider content-position="center">图像属性</el-divider>
-                    <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.1" :max="1" :step="0.1">
-                    </kris-slider>
-                    <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色">
-                    </kris-color-picker>
-                    <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
-                    </kris-color-picker>
-                </div>
-            </div>
-            <div class="container-right kris-scroll">
+        <kris-layout>
+            <template v-slot:left>
+                <el-divider content-position="center">取值范围</el-divider>
+                <kris-num-input-range v-model="range.x" title="X："></kris-num-input-range>
+                <kris-num-input-range v-model="range.y" title="Y："></kris-num-input-range>
+                <el-divider content-position="center">高斯分布</el-divider>
+                <kris-num-input-double v-model="gaussian.x" :names="gaussian.names" title="X：">
+                </kris-num-input-double>
+                <kris-num-input-double v-model="gaussian.y" :names="gaussian.names" title="Y：">
+                </kris-num-input-double>
+                <el-divider content-position="center">切片</el-divider>
+                <kris-tag-group v-model="slices.x" title="X 取值"></kris-tag-group>
+                <kris-tag-group v-model="slices.y" title="Y 取值"></kris-tag-group>
+                <el-divider content-position="center">图像属性</el-divider>
+                <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.1" :max="1" :step="0.1">
+                </kris-slider>
+                <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色">
+                </kris-color-picker>
+                <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色">
+                </kris-color-picker>
+            </template>
+            <template v-slot:right>
                 <div style="height: 100%;">
                     <div :id="plotId()" style="height: 100%;"></div>
                 </div>
-            </div>
-        </div>
+            </template>
+        </kris-layout>
     `,
     data() {
         return {
             componentName: "gh-slice",
             inited: false,
-            windowHeight: window.innerHeight,
             graphs: [],
             range: {
                 x: [-4, 4],
@@ -83,12 +80,6 @@ Vue.component('gh-slice', {
                 this.display();
             },
             deep: true
-        }
-    },
-
-    computed: {
-        containerHeight: function () {
-            return (this.windowHeight - 70) + "px";
         }
     },
     methods: {
@@ -215,9 +206,5 @@ Vue.component('gh-slice', {
             this.inited = true;
         }
     },
-    mounted() {
-        window.addEventListener("resize", (event) => {
-            this.windowHeight = window.innerHeight;
-        }, false);
-    }
+    mounted() {}
 })

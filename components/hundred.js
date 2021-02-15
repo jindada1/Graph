@@ -3,25 +3,23 @@
  */
 Vue.component('gh-hundred', {
     template: `
-        <div :style="{height: containerHeight}">
-            <div class="container-left kris-scroll">
-                <div class="control-panel">
-                    <el-divider content-position="center">实验设置</el-divider>
-                    <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
-                    <el-divider content-position="center">柱状图属性</el-divider>
-                    <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色">
-                    </kris-color-picker>
-                    <kris-color-picker v-model="histogramConfig.barStrokeColor" title="边缘颜色">
-                    </kris-color-picker>
-                    <kris-num-input v-model="histogramConfig.height" title="图高度" :step="10"></kris-num-input>
-                    <kris-num-input v-model="histogramConfig.maxWidth" title="图最大宽度" :step="5"></kris-num-input>
-                    <kris-num-input v-model="histogramConfig.maxBarWidth" title="柱最大宽度" :step="2">
-                    </kris-num-input>
-                    <el-divider content-position="center">布局</el-divider>
-                    <kris-slider v-model="layout.rowDistance" :title="'行间距'"></kris-slider>
-                </div>
-            </div>
-            <div class="container-right kris-scroll">
+        <kris-layout>
+            <template v-slot:left>
+                <el-divider content-position="center">实验设置</el-divider>
+                <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
+                <el-divider content-position="center">柱状图属性</el-divider>
+                <kris-color-picker v-model="histogramConfig.barColor" title="填充颜色">
+                </kris-color-picker>
+                <kris-color-picker v-model="histogramConfig.barStrokeColor" title="边缘颜色">
+                </kris-color-picker>
+                <kris-num-input v-model="histogramConfig.height" title="图高度" :step="10"></kris-num-input>
+                <kris-num-input v-model="histogramConfig.maxWidth" title="图最大宽度" :step="5"></kris-num-input>
+                <kris-num-input v-model="histogramConfig.maxBarWidth" title="柱最大宽度" :step="2">
+                </kris-num-input>
+                <el-divider content-position="center">布局</el-divider>
+                <kris-slider v-model="layout.rowDistance" :title="'行间距'"></kris-slider>
+            </template>
+            <template v-slot:right>
                 <div class="graph-maze">
                     <div v-for="(row, r) in dataMaze" :key="r" class="graph-maze-row">
                         <div class="graph-maze-head"></div>
@@ -33,14 +31,13 @@ Vue.component('gh-hundred', {
                         <div class="graph-maze-head sticky-right">{{percentageFmt(experiment.probabilities[r])}}</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </template>
+        </kris-layout>
     `,
     data() {
         return {
             componentName: "gh-hundred",
             inited: false,
-            windowHeight: window.innerHeight,
             dataMaze: [],
             experiment: {
                 probabilities: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
@@ -79,9 +76,6 @@ Vue.component('gh-hundred', {
         },
     },
     computed: {
-        containerHeight: function () {
-            return (this.windowHeight - 70) + "px";
-        },
         elementStyle: function () {
             return {
                 margin: this.layout.rowDistance + "px " + this.layout.marginX + "px"
@@ -138,10 +132,6 @@ Vue.component('gh-hundred', {
         }
     },
     mounted() {
-        window.addEventListener("resize", (event) => {
-            this.windowHeight = window.innerHeight;
-        }, false);
-
         this.display();
     }
 })
