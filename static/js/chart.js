@@ -99,6 +99,7 @@ function histogram(canvasElement, conf) {
         let lineWidth = context.lineWidth;
         context.strokeStyle = "#000000";
         context.lineWidth = 1;
+        context.translate(0.5, 0.5);
         if (config.axisX) {
             drawLine(config.padx, cHeight - config.pady, cWidth - config.padx, cHeight - config.pady)
             for (let i = 0; i < data.datas.length; i += config.axisXStep) {
@@ -117,6 +118,7 @@ function histogram(canvasElement, conf) {
                 t += config.axisYStepNum
             }
         }
+        context.translate(-0.5, -0.5);
         context.lineWidth = lineWidth;
         context.strokeStyle = strokeStyle;
     }
