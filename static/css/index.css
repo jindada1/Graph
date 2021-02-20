@@ -92,3 +92,43 @@
     display: block;
     margin-left: auto;
 }
+
+.graph-paper-money {
+    margin: 5px;
+    width: 200px;
+    height: 100px;
+    position: relative;
+    font-family: fantasy;
+    display: inline-block;
+    background-color: lightgray;
+}
+
+.graph-paper-money-inner {
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    display: flex;
+    position: absolute;
+    background-color: white;
+    border: 5px solid rgb(58, 58, 58);
+}
+
+.graph-paper-money-inner > span {
+    margin: 4px;
+    font-size: 20px;
+}
+
+.graph-paper-money-center {
+    flex: 1;
+    display: flex;
+    width: 100%;
+}
+
+.graph-paper-money-center > img {
+    border-radius: 50%;
+    width: 50px;
+    height: 80%;
+    object-fit: cover;
+    margin: auto;
+}

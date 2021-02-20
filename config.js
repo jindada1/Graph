@@ -26,25 +26,10 @@ const configurations = {
             component: "gh-slice",
             label: "二元函数切片",
         },
+        {
+            name: "papermoney",
+            component: "gh-papermoney",
+            label: "选纸币决策",
+        },
     ]
 }
-
-
-const testData = [
-    [
-        {
-            datas: [1, 7],
-            offset: 0
-        },
-        {
-            datas: [3, 1, 6, 2, 4, 3, 1, 6, 2, 4, 5],
-            offset: 0
-        }
-    ],
-    [
-        {
-            datas: [1, 3],
-            offset: 0
-        }
-    ]
-]
