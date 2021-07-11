@@ -3,7 +3,7 @@
  */
 Vue.component('gh-coins', {
     template: `
-        <kris-layout>
+        <kris-layout ref="frame">
             <template v-slot:left>
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-tag-group v-model="experiment.trials" title="实验次数" :min="0"></kris-tag-group>
@@ -40,6 +40,7 @@ Vue.component('gh-coins', {
     data() {
         return {
             componentName: "gh-coins",
+            updateLock: false,
             inited: false,
             dataMaze: [],
             experiment: {
@@ -62,7 +63,11 @@ Vue.component('gh-coins', {
             layout: {
                 rowDistance: 10,
                 marginX: 0,
-            }
+            },
+            storageList: [
+                "histogramConfig",
+                "experiment"
+            ]
         }
     },
 
@@ -133,7 +138,7 @@ Vue.component('gh-coins', {
             })
         },
         storeSettings() {
-            /** Cookie */
+            localStorage.setItem(this.componentName, JSON.stringify(this.$data))
         },
         init() {
             if (this.inited) return;
@@ -142,6 +147,6 @@ Vue.component('gh-coins', {
         }
     },
     mounted() {
-        this.display();
+        this.$refs.frame.loadData(this);
     }
 })

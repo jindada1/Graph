@@ -22,11 +22,6 @@ const configurations = {
             label: "联合概率密度",
         },
         {
-            name: "slice",
-            component: "gh-slice",
-            label: "二元函数切片",
-        },
-        {
             name: "papermoney",
             component: "gh-papermoney",
             label: "选纸币决策",

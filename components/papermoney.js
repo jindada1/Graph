@@ -31,7 +31,7 @@ Vue.component('kris-paper-money', {
 
 Vue.component('gh-papermoney', {
     template: `
-        <kris-layout>
+        <kris-layout ref="frame">
             <template v-slot:left>
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-tag-group v-model="experiment.values" title="纸币面值" :min="0"></kris-tag-group>
@@ -48,6 +48,7 @@ Vue.component('gh-papermoney', {
     data() {
         return {
             componentName: "gh-papermoney",
+            updateLock: false,
             inited: false,
             experiment: {
                 values: [1, 2, 5, 10, 20, 50, 100],
@@ -67,15 +68,15 @@ Vue.component('gh-papermoney', {
     computed: {
     },
     methods: {
-        storeSettings() {
-            /** Cookie */
-        },
         display() {
             this.money.length = 0;
             for (let _ = 0; _ < this.experiment.paperNum; _++) {
                 let i = Math.floor(Math.random() * this.experiment.values.length);
                 this.money.push(this.experiment.values[i])
             }
+        },
+        storeSettings() {
+            localStorage.setItem(this.componentName, JSON.stringify(this.$data))
         },
         init() {
             if (this.inited) return;
@@ -84,6 +85,6 @@ Vue.component('gh-papermoney', {
         }
     },
     mounted() {
-        this.display()
+        this.$refs.frame.loadData(this);
     }
 })

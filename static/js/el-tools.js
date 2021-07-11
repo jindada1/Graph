@@ -29,6 +29,23 @@ Vue.component('kris-layout', {
             return (this.windowHeight - 70) + "px";
         }
     },
+    methods: {
+        loadData(component) {
+            let configStr = localStorage.getItem(component.componentName);
+            if (configStr === null) return;
+            component.updateLock = true;
+    
+            let config = JSON.parse(configStr)
+            for (const prop of component.storageList) {
+                component.$data[prop] = config[prop]
+            }
+    
+            Vue.nextTick(() => {
+                component.updateLock = false;
+                component.display();
+            })
+        }
+    },
     mounted() {
         window.addEventListener("resize", (event) => {
             this.windowHeight = window.innerHeight;
@@ -240,7 +257,6 @@ Vue.component('kris-tag-group', {
     }
 })
 
-
 Vue.component('kris-num-input-range', {
     template: `
     <div class="el-tools-item">
@@ -359,6 +375,42 @@ Vue.component('kris-num-input-double', {
         value(value) {
             this.from = value[0];
             this.to = value[1];
+        }
+    }
+})
+
+Vue.component('kris-switch', {
+    template: `
+    <div class="el-tools-item">
+        <span class="el-tools-item-head">{{title}}</span>
+        <div class="el-tools-item-content">
+            <div style="margin: 10px 0">
+                <el-switch v-model="active" @change="switched" :active-color="activeColor" :inactive-color="inactiveColor">
+                </el-switch>
+            </div>
+        </div>
+    </div>
+    `,
+    props: {
+        title: String,
+        value: Boolean
+    },
+    data() {
+        return {
+            active: this.value,
+            activeColor: "#409EFF",
+            inactiveColor: "#eeeeee",
+        }
+    },
+    methods: {
+        switched(val) {
+            // console.log(val);
+            this.$emit('input', val);
+        }
+    },
+    watch: {
+        value(value) {
+            this.active = value;
         }
     }
 })

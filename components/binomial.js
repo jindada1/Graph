@@ -3,7 +3,7 @@
  */
 Vue.component('gh-binomial', {
     template: `
-        <kris-layout>
+        <kris-layout ref="frame">
             <template v-slot:left>
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
@@ -42,6 +42,7 @@ Vue.component('gh-binomial', {
     data() {
         return {
             componentName: "gh-binomial",
+            updateLock: false,
             inited: false,
             dataMaze: [],
             experiment: {
@@ -59,7 +60,11 @@ Vue.component('gh-binomial', {
             layout: {
                 marginX: 10,
                 rowDistance: 10,
-            }
+            },
+            storageList: [
+                "experiment",
+                "histogramConfig"
+            ]
         }
     },
     watch: {
@@ -124,7 +129,7 @@ Vue.component('gh-binomial', {
             })
         },
         storeSettings() {
-            /** Cookie */
+            localStorage.setItem(this.componentName, JSON.stringify(this.$data))
         },
         init() {
             if (this.inited) return;
@@ -133,6 +138,6 @@ Vue.component('gh-binomial', {
         }
     },
     mounted() {
-        this.display();
+        this.$refs.frame.loadData(this);
     }
 })

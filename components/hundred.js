@@ -3,7 +3,7 @@
  */
 Vue.component('gh-hundred', {
     template: `
-        <kris-layout>
+        <kris-layout ref="frame">
             <template v-slot:left>
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-tag-group v-model="experiment.probabilities" title="成功率数组" :min="0" :max="1"></kris-tag-group>
@@ -37,6 +37,7 @@ Vue.component('gh-hundred', {
     data() {
         return {
             componentName: "gh-hundred",
+            updateLock: false,
             inited: false,
             dataMaze: [],
             experiment: {
@@ -58,7 +59,11 @@ Vue.component('gh-hundred', {
             layout: {
                 rowDistance: 10,
                 marginX: 0,
-            }
+            },
+            storageList: [
+                "histogramConfig",
+                "experiment"
+            ]
         }
     },
     watch: {
@@ -123,7 +128,7 @@ Vue.component('gh-hundred', {
             })
         },
         storeSettings() {
-            /** Cookie */
+            localStorage.setItem(this.componentName, JSON.stringify(this.$data))
         },
         init() {
             if (this.inited) return;
@@ -132,6 +137,6 @@ Vue.component('gh-hundred', {
         }
     },
     mounted() {
-        this.display();
+        this.$refs.frame.loadData(this);
     }
 })
