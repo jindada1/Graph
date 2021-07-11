@@ -26,5 +26,10 @@ const configurations = {
             component: "gh-papermoney",
             label: "选纸币决策",
         },
+        {
+            name: "pi",
+            component: "gh-pi",
+            label: "圆周率的模拟",
+        },
     ]
 }

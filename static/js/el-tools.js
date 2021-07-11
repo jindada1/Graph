@@ -1,5 +1,5 @@
 /**
- * el-tools.js v1.1.0
+ * el-tools.js v1.2.0
  * @author Kris Huang
  * @wechat IsKrisHuang
  * 
@@ -42,7 +42,6 @@ Vue.component('kris-layout', {
     
             Vue.nextTick(() => {
                 component.updateLock = false;
-                component.display();
             })
         }
     },
@@ -412,5 +411,70 @@ Vue.component('kris-switch', {
         value(value) {
             this.active = value;
         }
+    }
+})
+
+Vue.component('kris-canvas', {
+    template: `
+        <canvas ref="canvas" :width="width" :height="height" class="graph-canvas"/>
+    `,
+    props: {
+        width: {
+            type: Number,
+            default: 500
+        },
+        height: {
+            type: Number,
+            default: 500
+        }
+    },
+    data() {
+        return {
+            context: null,
+            strokeStyle: "#000000",
+            lineWidth: 1
+        }
+    },
+    methods: {
+        point(x, y, r = 2, lineColor = "#000000") {
+            let color = this.context.fillStyle;
+            this.context.beginPath();
+            this.context.fillStyle = lineColor;
+            this.context.arc(x, y, r, 0, Math.PI * 2, true);
+            this.context.fill();
+            this.context.fillStyle = color;
+        },
+        circle(x, y, r = 2, lineColor = "#000000") {
+            let color = this.context.strokeStyle;
+            this.context.beginPath();
+            this.context.strokeStyle = lineColor;
+            this.context.arc(x, y, r, 0, Math.PI * 2, true);
+            this.context.stroke();
+            this.context.strokeStyle = color;
+        },
+        line(fromX, fromY, toX, toY) {
+            this.context.beginPath();
+            this.context.moveTo(fromX, fromY);
+            this.context.lineTo(toX, toY);
+            this.context.stroke();
+        },
+        drawAxis() {
+            let H = this.height;
+            let W = this.width;
+            let CH = parseInt(H / 2);
+            let CW = parseInt(W / 2);
+            this.line(0, CH, W, CH)
+            this.line(CW, 0, CW, H)
+            this.circle(CW, CH)
+            this.circle(CW, CH, CW, "#aaaaaa")
+        },
+        refresh() {
+            this.context.clearRect (0 , 0, this.width, this.height);
+            this.drawAxis()
+        }
+    },
+    mounted() {
+        this.context = this.$refs.canvas.getContext("2d");
+        this.refresh()
     }
 })

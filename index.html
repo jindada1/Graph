@@ -36,6 +36,7 @@
 <!-- use math tools -->
 <script src="./static/js/math.js"></script>
 <!-- use components -->
+<script src="./components/pi.js"></script>
 <script src="./components/coins.js"></script>
 <script src="./components/hundred.js"></script>
 <script src="./components/binomial.js"></script>
@@ -45,18 +46,22 @@
 <!-- run main scripts -->
 <script>
     const tabs = configurations.tabs;
+    const HOME_PAGE = 5;
     new Vue({
         el: '#app',
         data: function () {
             return {
                 tabs: tabs,
-                activeTabName: tabs.length ? tabs[3].name : null
+                activeTabName: tabs.length ? tabs[HOME_PAGE].name : null
             }
         },
         methods: {
             tabClicked() {
                 this.$refs[this.activeTabName][0].init();
             }
+        },
+        mounted() {
+            this.$refs[this.activeTabName][0].init();
         }
     })
 </script>
