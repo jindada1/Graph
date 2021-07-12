@@ -13,12 +13,17 @@
     flex-grow: 1;
 }
 
+.el-tools-item-text {
+    line-height: 40px;
+    flex: none;
+}
+
 .el-tools-item-content {
     max-width: 220px; 
     display: flex;
 }
 
-.el-tools-item-content > span {
+.el-tools-item-content-text {
     line-height: 40px;
     margin: 0 10px;
     flex: none;

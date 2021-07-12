@@ -12,6 +12,12 @@ Vue.component('gh-pi', {
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
+                <el-divider content-position="center">统计结果</el-divider>
+                <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
+                <kris-progress title="圆内点占比" :total="result.totalNum" :value="result.insideNum"></kris-progress>
+                <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
+                <el-divider content-position="center">历史结果</el-divider>
+                <kris-table :tableData="historyResult"></kris-table>
             </template>
             <template v-slot:right>
                 <div class="graph-transparent-background graph-canvas-container">
@@ -37,8 +43,16 @@ Vue.component('gh-pi', {
             storageList: [
                 "radius",
                 "experiment",
-                "plotConfig"
-            ]
+                "plotConfig",
+                "storeResult"
+            ],
+            result: {
+                totalNum: 0,
+                insideNum: 0,
+                pi: "-"
+            },
+            storeResult: false,
+            historyResult: []
         }
     },
     watch: {
@@ -74,8 +88,22 @@ Vue.component('gh-pi', {
                 let y = Math.random() * this.radius * 2;
                 this.points.push([parseInt(x), parseInt(y)]);
             }
+            this.count()
+        },
+        count() {
+            const insides = this.points.filter(point => this.inside(point[0], point[1]));
+            let result = {
+                totalNum: this.experiment.pointNum,
+                insideNum: insides.length,
+                pi: (4 * insides.length / this.experiment.pointNum).toString()
+            }
+            this.result = result;
+            if (this.storeResult) {
+                this.historyResult.push(result)
+            }
         },
         display() {
+            if (this.updateLock) return;
             this.$refs.playground.refresh();
             for (const point of this.points) {
                 let color = this.inside(point[0], point[1]) ? this.plotConfig.insideColor : this.plotConfig.outsideColor;

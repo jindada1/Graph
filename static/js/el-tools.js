@@ -34,12 +34,12 @@ Vue.component('kris-layout', {
             let configStr = localStorage.getItem(component.componentName);
             if (configStr === null) return;
             component.updateLock = true;
-    
+
             let config = JSON.parse(configStr)
             for (const prop of component.storageList) {
                 component.$data[prop] = config[prop]
             }
-    
+
             Vue.nextTick(() => {
                 component.updateLock = false;
             })
@@ -56,7 +56,7 @@ Vue.component('kris-color-picker', {
     template: `
         <div class="el-tools-item">
             <span class="el-tools-item-head"> {{title}} </span>
-            <span style="line-height: 40px; padding-right: 20px;" v-bind:style="'color: ' + color"> {{color}} </span>
+            <span class="el-tools-item-content-text" v-bind:style="'color: ' + color"> {{color}} </span>
             <el-color-picker v-model="color" @change="colorChanged"/>
         </div>
     `,
@@ -77,6 +77,25 @@ Vue.component('kris-color-picker', {
     watch: {
         value(value) {
             this.color = value;
+        }
+    }
+})
+
+Vue.component('kris-form-item', {
+    template: `
+        <div class="el-tools-item">
+            <span class="el-tools-item-head"> {{title}} </span>
+            <span class="el-tools-item-text"> {{value}} </span>
+        </div>
+    `,
+    props: {
+        title: {
+            default: "Kris",
+            type: String
+        },
+        value: {
+            default: "cool",
+            type: String
         }
     }
 })
@@ -122,6 +141,50 @@ Vue.component('kris-slider', {
     watch: {
         value(value) {
             this.sliderValue = value;
+        }
+    }
+})
+
+Vue.component('kris-progress', {
+    template: `
+        <div class="el-tools-item el-tools-item-col">            
+            <div class="el-tools-item-text">
+                <span>{{title}}</span>
+                <span style="float: right;">{{value}}/{{total}}</span>
+            </div>
+            <el-progress :text-inside="textInside" :stroke-width="height" :percentage="percentage"></el-progress>
+        </div>
+    `,
+    props: {
+        title: {
+            default: "kris",
+            type: String
+        },
+        total: {
+            default: 100,
+            type: Number
+        },
+        value: {
+            default: 0,
+            type: Number
+        },
+        height: {
+            default: 24,
+            type: Number
+        },
+        textInside: {
+            default: true,
+            type: Boolean
+        }
+    },
+    data() {
+        return {}
+    },
+    computed: {
+        percentage() {
+            if (this.total < 1) return 0;
+            if (this.value > this.total) return 0;
+            return parseInt(this.value * 100 / this.total);
         }
     }
 })
@@ -263,7 +326,7 @@ Vue.component('kris-num-input-range', {
         <div class="el-tools-item-content">
             <el-input v-model="from" class="el-tools-item-tag" placeholder="1" size="medium"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
-            <span>-</span>
+            <span class="el-tools-item-content-text">—</span>
             <el-input v-model="to" class="el-tools-item-tag" placeholder="10" size="medium"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
         </div>
@@ -330,10 +393,10 @@ Vue.component('kris-num-input-double', {
     <div class="el-tools-item">
         <span class="el-tools-item-head">{{title}}</span>
         <div class="el-tools-item-content">
-            <span style="font-size: 12px;">{{names[0]}}</span>
+            <span class="el-tools-item-content-text">{{names[0]}}</span>
             <el-input v-model="from" class="el-tools-item-tag" placeholder="0" size="medium"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
-            <span style="font-size: 12px;">{{names[1]}}</span>
+            <span class="el-tools-item-content-text">{{names[1]}}</span>
             <el-input v-model="to" class="el-tools-item-tag" placeholder="1" size="medium"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
         </div>
@@ -469,12 +532,35 @@ Vue.component('kris-canvas', {
             this.circle(CW, CH, CW, "#aaaaaa")
         },
         refresh() {
-            this.context.clearRect (0 , 0, this.width, this.height);
+            this.context.clearRect(0, 0, this.width, this.height);
             this.drawAxis()
         }
     },
     mounted() {
         this.context = this.$refs.canvas.getContext("2d");
         this.refresh()
+    }
+})
+
+Vue.component('kris-table', {
+    template: `
+        <div class="el-tools-item">
+            <el-table :data="tableData" style="width: 100%" stripe :height="height">
+                <el-table-column prop="totalNum" label="总点数" width="70"> </el-table-column>
+                <el-table-column prop="insideNum" label="圆内点数" width="80"> </el-table-column>
+                <el-table-column prop="pi" label="圆周率估值"> </el-table-column>
+            </el-table>
+        </div>
+    `,
+    props: {
+        tableData: {
+            type: Array,
+            default: []
+        }
+    },
+    data() {
+        return {
+            height: 400
+        }
     }
 })

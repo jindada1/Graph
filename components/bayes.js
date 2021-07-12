@@ -33,6 +33,7 @@ Vue.component('gh-bayers', {
     },
     methods: {
         display() {
+            if (this.updateLock) return;
             
         },
         storeSettings() {

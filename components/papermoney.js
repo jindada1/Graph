@@ -69,6 +69,7 @@ Vue.component('gh-papermoney', {
     },
     methods: {
         display() {
+            if (this.updateLock) return;
             this.money.length = 0;
             for (let _ = 0; _ < this.experiment.paperNum; _++) {
                 let i = Math.floor(Math.random() * this.experiment.values.length);

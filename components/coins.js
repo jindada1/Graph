@@ -132,6 +132,7 @@ Vue.component('gh-coins', {
             return data;
         },
         display() {
+            if (this.updateLock) return;
             this.dataMaze = this.calculateData();
             Vue.nextTick(() => {
                 this.render(this.histogramConfig);
