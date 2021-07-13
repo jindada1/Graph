@@ -6,12 +6,12 @@ Vue.component('gh-pi', {
     template: `
         <kris-layout ref="frame">
             <template v-slot:left>
-                <el-divider content-position="center">实验设置</el-divider>
+                <el-divider content-position="center">当前实验设置</el-divider>
                 <kris-num-input title="实验点数量" v-model="experiment.pointNum" :step="100" :min="100"></kris-num-input>
                 <kris-num-input title="圆的半径" v-model="radius" :step="10" :min="50"></kris-num-input>
                 <kris-num-input title="实验次数" v-model="experimentNum" :step="5" :min="1"></kris-num-input>
                 <kris-button title="开始实验" :tips="tips" :click="run"></kris-button>
-                <el-divider content-position="center">统计结果</el-divider>
+                <el-divider content-position="center">当前实验统计结果</el-divider>
                 <kris-progress title="圆内点占比" :total="result.totalNum" :value="result.insideNum"></kris-progress>
                 <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
                 <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
