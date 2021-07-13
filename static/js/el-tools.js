@@ -177,9 +177,6 @@ Vue.component('kris-progress', {
             type: Boolean
         }
     },
-    data() {
-        return {}
-    },
     computed: {
         percentage() {
             if (this.total < 1) return 0;
@@ -463,7 +460,7 @@ Vue.component('kris-button', {
         },
         click: {
             type: Function,
-            default: () => {}
+            default: () => { }
         }
     }
 })
@@ -572,45 +569,61 @@ Vue.component('kris-canvas', {
 Vue.component('kris-table', {
     template: `
         <div class="el-tools-item el-tools-item-col">
-            <el-row class="kris-table-row kris-table-header" >
-                <el-col :span="7">总点数</el-col>
-                <el-col :span="7">圆内点数</el-col>
-                <el-col :span="10">圆周率估值</el-col>
-            </el-row>
-            <div class="kris-scroll kris-table-body" :style="'max-height:' + height + 'px'">
-                <el-row class="kris-table-row" v-for="(data, r) in tableData" :key="r">
-                    <el-col :span="7">{{data.totalNum}}</el-col>
-                    <el-col :span="7">{{data.insideNum}}</el-col>
-                    <el-col :span="10">{{data.pi}}</el-col>
+            <div v-if="value.length > 0">
+                <el-row class="kris-table-row kris-table-header" >
+                    <el-col :span="7">总点数</el-col>
+                    <el-col :span="7">圆内点数</el-col>
+                    <el-col :span="10">圆周率估值</el-col>
+                </el-row>
+                <div class="kris-scroll-hidden kris-table-body" :style="'max-height:' + height + 'px'">
+                    <el-row class="kris-table-row" v-for="(data, r) in rows" :key="r">
+                        <el-col :span="7">{{data.totalNum}}</el-col>
+                        <el-col :span="7">{{data.insideNum}}</el-col>
+                        <el-col :span="10">{{data.pi}}</el-col>
+                    </el-row>
+                </div>
+                <el-row class="kris-table-row">
+                    <el-col :span="7">
+                        <el-button type="text" @click="clear">清空记录</el-button>
+                    </el-col>
+                    <el-col :span="7">{{summary.key}}</el-col>
+                    <el-col :span="10">{{summary.value}}</el-col>
                 </el-row>
             </div>
-            <el-row class="kris-table-row">
-                <el-col :span="7">总点数</el-col>
-                <el-col :span="7">圆内点数</el-col>
-                <el-col :span="10">圆周率估值</el-col>
-            </el-row>
+            <div v-else class="kris-table-row" style="text-align: center; color: lightgray">
+                暂无数据
+            </div>
         </div>
     `,
     props: {
-        tableData: {
-            type: Array,
-            default: []
-        },
+        value: Array,
         height: {
             type: Number,
             default: 400
         },
         summary: {
-            type: Function,
-            default: () => {}
+            type: Object,
+            default: {
+                key: "kris is",
+                value: "cool 😎"
+            }
         }
     },
     data() {
         return {
+            rows: this.value
         }
     },
     methods: {
-
+        clear() {
+            this.rows = [];
+            this.$emit('input', this.rows);
+        }
+    },
+    watch: {
+        value(value) {
+            this.rows = value;
+        }
     }
 })
 

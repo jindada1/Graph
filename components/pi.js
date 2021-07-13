@@ -16,7 +16,7 @@ Vue.component('gh-pi', {
                 <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
                 <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
                 <el-divider content-position="center">实验结果记录</el-divider>
-                <kris-table :tableData="historyResult" :height="300" :summary="getAverage"></kris-table>
+                <kris-table v-model="historyResult" :summary="getSummary" :height="300"></kris-table>
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
@@ -53,7 +53,7 @@ Vue.component('gh-pi', {
             result: {
                 totalNum: 0,
                 insideNum: 0,
-                pi: "-"
+                pi: "😀"
             },
             precise: 8,
             storeResult: false,
@@ -83,7 +83,23 @@ Vue.component('gh-pi', {
     },
     computed: {
         tips() {
-            return '进行 ' + this.experimentNum + ' 次实验'
+            return '进行 ' + (this.experimentNum || 1) + ' 次实验'
+        },
+        getSummary() {
+            let avg = "0";
+            
+            if (this.historyResult.length) {
+                const values = this.historyResult.map(result => Number(result.pi));
+                let sum = values.reduce((prev, curr) => {
+                    return prev + curr
+                }, 0);
+                avg = (sum / this.historyResult.length).toFixed(this.precise).toString()
+            }
+            
+            return {
+                key: "平均值",
+                value: avg
+            }
         }
     },
     methods: {
@@ -122,36 +138,6 @@ Vue.component('gh-pi', {
                 this.$refs.playground.point(point[0], point[1], 3, color);
             }
             this.storeSettings();
-        },
-        getAverage(param) {
-            const { columns, data } = param;
-            const sums = [];
-            columns.forEach((column, index) => {
-                if (index === 0) {
-                    sums[index] = '平均值';
-                    return;
-                }
-                else if(index === (columns.length - 1)) {
-                    const values = data.map(item => Number(item[column.property]));
-                    if (!values.every(value => isNaN(value))) {
-                        let sum = values.reduce((prev, curr) => {
-                            const value = Number(curr);
-                            if (!isNaN(value)) {
-                                return prev + curr;
-                            } else {
-                                return prev;
-                            }
-                        }, 0);
-                        sums[index] = (sum / values.length).toFixed(this.precise).toString()
-                    } else {
-                        sums[index] = 'N/A';
-                    }
-                }
-                else
-                    sums[index] = '';
-            });
-
-            return sums;
         },
         inside(x, y) {
             let r = this.radius;

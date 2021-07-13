@@ -34,6 +34,19 @@
     background-color: transparent;
 }
 
+.kris-scroll-hidden {
+    overflow: auto;
+}
+
+.kris-scroll-hidden::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.kris-scroll-hidden::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
 .graph-maze {
     width: fit-content;
 }
@@ -165,7 +178,12 @@
 }
 
 .kris-table-row {
-    margin: 20px 0;
+    margin: 2px 0;
+    line-height: 40px;
+}
+
+.kris-table-row div:last-child {
+    text-align: right;
 }
 
 .kris-table-header {
@@ -173,6 +191,7 @@
 }
 
 .kris-table-body {
+    overflow-y: auto;
     border-width: 1px 0;
     border-style: dashed;
     border-color: lightgray;
