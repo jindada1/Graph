@@ -150,7 +150,7 @@ Vue.component('kris-progress', {
         <div class="el-tools-item el-tools-item-col">            
             <div class="el-tools-item-text">
                 <span>{{title}}</span>
-                <span style="float: right;">{{value}}/{{total}}</span>
+                <span style="float: right;">{{value}} / {{total}}</span>
             </div>
             <el-progress :text-inside="textInside" :stroke-width="height" :percentage="percentage"></el-progress>
         </div>
@@ -545,8 +545,9 @@ Vue.component('kris-canvas', {
 Vue.component('kris-table', {
     template: `
         <div class="el-tools-item">
-            <el-table :data="tableData" style="width: 100%" stripe :height="height">
-                <el-table-column prop="totalNum" label="总点数" width="70"> </el-table-column>
+            <el-table :data="tableData" style="width: 100%" stripe show-summary
+                :summary-method="getAverage" :height="height">
+                <el-table-column prop="totalNum" label="总点数" width="80"> </el-table-column>
                 <el-table-column prop="insideNum" label="圆内点数" width="80"> </el-table-column>
                 <el-table-column prop="pi" label="圆周率估值"> </el-table-column>
             </el-table>
@@ -556,11 +557,46 @@ Vue.component('kris-table', {
         tableData: {
             type: Array,
             default: []
-        }
+        },
+        height: {
+            type: Number,
+            default: 400
+        },
     },
     data() {
         return {
-            height: 400
+        }
+    },
+    methods: {
+        getAverage(param) {
+            const { columns, data } = param;
+            const sums = [];
+            columns.forEach((column, index) => {
+                if (index === 0) {
+                    sums[index] = '平均值';
+                    return;
+                }
+                else if(index === (columns.length - 1)) {
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        let sum = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                            if (!isNaN(value)) {
+                                return prev + curr;
+                            } else {
+                                return prev;
+                            }
+                        }, 0);
+                        sums[index] = (sum / values.length).toFixed(6).toString()
+                    } else {
+                        sums[index] = 'N/A';
+                    }
+                }
+                else
+                    sums[index] = '';
+            });
+
+            return sums;
         }
     }
 })

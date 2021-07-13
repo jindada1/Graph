@@ -9,15 +9,15 @@ Vue.component('gh-pi', {
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-num-input title="实验点数量" v-model="experiment.pointNum" :step="100" :min="100"></kris-num-input>
                 <kris-num-input title="圆的半径（像素）" v-model="radius" :step="10" :min="50"></kris-num-input>
-                <el-divider content-position="center">图像属性</el-divider>
-                <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
-                <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
                 <el-divider content-position="center">统计结果</el-divider>
                 <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
                 <kris-progress title="圆内点占比" :total="result.totalNum" :value="result.insideNum"></kris-progress>
                 <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
-                <el-divider content-position="center">历史结果</el-divider>
-                <kris-table :tableData="historyResult"></kris-table>
+                <el-divider content-position="center">实验结果记录</el-divider>
+                <kris-table :tableData="historyResult" :height="300"></kris-table>
+                <el-divider content-position="center">图像属性</el-divider>
+                <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
+                <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
             </template>
             <template v-slot:right>
                 <div class="graph-transparent-background graph-canvas-container">
@@ -32,9 +32,9 @@ Vue.component('gh-pi', {
             updateLock: false,
             inited: false,
             experiment: {
-                pointNum: 100,
+                pointNum: 1000,
             },
-            radius: 200,
+            radius: 280,
             plotConfig: {
                 insideColor: "#FF6D24",
                 outsideColor: "#409EFF",
@@ -51,6 +51,7 @@ Vue.component('gh-pi', {
                 insideNum: 0,
                 pi: "-"
             },
+            precise: 8,
             storeResult: false,
             historyResult: []
         }
@@ -95,7 +96,7 @@ Vue.component('gh-pi', {
             let result = {
                 totalNum: this.experiment.pointNum,
                 insideNum: insides.length,
-                pi: (4 * insides.length / this.experiment.pointNum).toString()
+                pi: (4 * insides.length / this.experiment.pointNum).toFixed(this.precise).toString()
             }
             this.result = result;
             if (this.storeResult) {
