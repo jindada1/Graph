@@ -441,6 +441,33 @@ Vue.component('kris-num-input-double', {
     }
 })
 
+Vue.component('kris-button', {
+    template: `
+    <div class="el-tools-item">
+        <span class="el-tools-item-head"></span>
+        <div class="el-tools-item-content">
+            <el-tooltip slot="append" effect="light" :content="tips" placement="left">
+                <el-button icon="el-icon-video-play" @click="click">{{title}}</el-button>
+            </el-tooltip>
+        </div>
+    </div>
+    `,
+    props: {
+        title: {
+            type: String,
+            default: "Kris"
+        },
+        tips: {
+            type: String,
+            default: "Kris is so cool. 😎"
+        },
+        click: {
+            type: Function,
+            default: () => {}
+        }
+    }
+})
+
 Vue.component('kris-switch', {
     template: `
     <div class="el-tools-item">
@@ -544,13 +571,24 @@ Vue.component('kris-canvas', {
 
 Vue.component('kris-table', {
     template: `
-        <div class="el-tools-item">
-            <el-table :data="tableData" style="width: 100%" stripe show-summary
-                :summary-method="getAverage" :height="height">
-                <el-table-column prop="totalNum" label="总点数" width="80"> </el-table-column>
-                <el-table-column prop="insideNum" label="圆内点数" width="80"> </el-table-column>
-                <el-table-column prop="pi" label="圆周率估值"> </el-table-column>
-            </el-table>
+        <div class="el-tools-item el-tools-item-col">
+            <el-row class="kris-table-row kris-table-header" >
+                <el-col :span="7">总点数</el-col>
+                <el-col :span="7">圆内点数</el-col>
+                <el-col :span="10">圆周率估值</el-col>
+            </el-row>
+            <div class="kris-scroll kris-table-body" :style="'max-height:' + height + 'px'">
+                <el-row class="kris-table-row" v-for="(data, r) in tableData" :key="r">
+                    <el-col :span="7">{{data.totalNum}}</el-col>
+                    <el-col :span="7">{{data.insideNum}}</el-col>
+                    <el-col :span="10">{{data.pi}}</el-col>
+                </el-row>
+            </div>
+            <el-row class="kris-table-row">
+                <el-col :span="7">总点数</el-col>
+                <el-col :span="7">圆内点数</el-col>
+                <el-col :span="10">圆周率估值</el-col>
+            </el-row>
         </div>
     `,
     props: {
@@ -562,41 +600,17 @@ Vue.component('kris-table', {
             type: Number,
             default: 400
         },
+        summary: {
+            type: Function,
+            default: () => {}
+        }
     },
     data() {
         return {
         }
     },
     methods: {
-        getAverage(param) {
-            const { columns, data } = param;
-            const sums = [];
-            columns.forEach((column, index) => {
-                if (index === 0) {
-                    sums[index] = '平均值';
-                    return;
-                }
-                else if(index === (columns.length - 1)) {
-                    const values = data.map(item => Number(item[column.property]));
-                    if (!values.every(value => isNaN(value))) {
-                        let sum = values.reduce((prev, curr) => {
-                            const value = Number(curr);
-                            if (!isNaN(value)) {
-                                return prev + curr;
-                            } else {
-                                return prev;
-                            }
-                        }, 0);
-                        sums[index] = (sum / values.length).toFixed(6).toString()
-                    } else {
-                        sums[index] = 'N/A';
-                    }
-                }
-                else
-                    sums[index] = '';
-            });
 
-            return sums;
-        }
     }
 })
+

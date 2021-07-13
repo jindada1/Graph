@@ -163,3 +163,17 @@
     background-size: 16px 16px;
     background-position: 0 0, 8px 8px; */
 }
+
+.kris-table-row {
+    margin: 20px 0;
+}
+
+.kris-table-header {
+    font-weight: bold;
+}
+
+.kris-table-body {
+    border-width: 1px 0;
+    border-style: dashed;
+    border-color: lightgray;
+}

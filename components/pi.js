@@ -8,13 +8,15 @@ Vue.component('gh-pi', {
             <template v-slot:left>
                 <el-divider content-position="center">实验设置</el-divider>
                 <kris-num-input title="实验点数量" v-model="experiment.pointNum" :step="100" :min="100"></kris-num-input>
-                <kris-num-input title="圆的半径（像素）" v-model="radius" :step="10" :min="50"></kris-num-input>
+                <kris-num-input title="圆的半径" v-model="radius" :step="10" :min="50"></kris-num-input>
+                <kris-num-input title="实验次数" v-model="experimentNum" :step="5" :min="1"></kris-num-input>
+                <kris-button title="开始实验" :tips="tips" :click="run"></kris-button>
                 <el-divider content-position="center">统计结果</el-divider>
-                <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
                 <kris-progress title="圆内点占比" :total="result.totalNum" :value="result.insideNum"></kris-progress>
                 <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
+                <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
                 <el-divider content-position="center">实验结果记录</el-divider>
-                <kris-table :tableData="historyResult" :height="300"></kris-table>
+                <kris-table :tableData="historyResult" :height="300" :summary="getAverage"></kris-table>
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
@@ -34,6 +36,7 @@ Vue.component('gh-pi', {
             experiment: {
                 pointNum: 1000,
             },
+            experimentNum: 1,
             radius: 280,
             plotConfig: {
                 insideColor: "#FF6D24",
@@ -44,7 +47,8 @@ Vue.component('gh-pi', {
                 "radius",
                 "experiment",
                 "plotConfig",
-                "storeResult"
+                "storeResult",
+                "experimentNum"
             ],
             result: {
                 totalNum: 0,
@@ -78,13 +82,20 @@ Vue.component('gh-pi', {
         }
     },
     computed: {
+        tips() {
+            return '进行 ' + this.experimentNum + ' 次实验'
+        }
     },
     methods: {
+        run() {
+            for (let i = 0; i < this.experimentNum; i++) {
+                this.generatePoints();
+            }
+            this.display()
+        },
         generatePoints() {
-            let i = 0;
             this.points.length = 0;
-            while (i < this.experiment.pointNum) {
-                i++;
+            for (let i = 0; i < this.experiment.pointNum; i++) {
                 let x = Math.random() * this.radius * 2;
                 let y = Math.random() * this.radius * 2;
                 this.points.push([parseInt(x), parseInt(y)]);
@@ -111,6 +122,36 @@ Vue.component('gh-pi', {
                 this.$refs.playground.point(point[0], point[1], 3, color);
             }
             this.storeSettings();
+        },
+        getAverage(param) {
+            const { columns, data } = param;
+            const sums = [];
+            columns.forEach((column, index) => {
+                if (index === 0) {
+                    sums[index] = '平均值';
+                    return;
+                }
+                else if(index === (columns.length - 1)) {
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        let sum = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                            if (!isNaN(value)) {
+                                return prev + curr;
+                            } else {
+                                return prev;
+                            }
+                        }, 0);
+                        sums[index] = (sum / values.length).toFixed(this.precise).toString()
+                    } else {
+                        sums[index] = 'N/A';
+                    }
+                }
+                else
+                    sums[index] = '';
+            });
+
+            return sums;
         },
         inside(x, y) {
             let r = this.radius;
