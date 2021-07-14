@@ -196,3 +196,19 @@
     border-style: dashed;
     border-color: lightgray;
 }
+
+.kris-icon-container {
+    font-size: 100px;
+    text-align: center;
+}
+
+.kris-icons-row {
+    text-align: center; 
+    margin: 20px 0;
+}
+
+.kris-col-bar {
+    width: 20px;
+    background-color: #79BBFF;
+    margin: auto;
+}

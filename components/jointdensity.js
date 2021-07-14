@@ -9,21 +9,25 @@ Vue.component('gh-jointdensity', {
                 <el-divider content-position="center">取值范围</el-divider>
                 <kris-num-input-range v-model="range.x" title="X："></kris-num-input-range>
                 <kris-num-input-range v-model="range.y" title="Y："></kris-num-input-range>
+                
                 <el-divider content-position="center">高斯分布</el-divider>
                 <kris-num-input-double v-model="gaussian.x" :names="gaussian.names" title="X：">
                 </kris-num-input-double>
                 <kris-num-input-double v-model="gaussian.y" :names="gaussian.names" title="Y：">
                 </kris-num-input-double>
+                
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.05" :max="0.3" :step="0.01">
                 </kris-slider>
                 <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色"></kris-color-picker>
                 <kris-switch title="透视视角" v-model="isPerspective"></kris-switch>
+                
                 <el-divider content-position="center">初始视角</el-divider>
                 <kris-slider v-model="eye.x" title="X" :min="-2" :max="2" :step="0.1"></kris-slider>
                 <kris-slider v-model="eye.y" title="Y" :min="-2" :max="2" :step="0.1"></kris-slider>
                 <kris-slider v-model="eye.z" title="Z" :min="-2" :max="2" :step="0.1"></kris-slider>
+                
                 <el-divider content-position="center">函数切片</el-divider>
                 <kris-tag-group v-model="slices.x" title="X 取值"></kris-tag-group>
                 <kris-tag-group v-model="slices.y" title="Y 取值"></kris-tag-group>

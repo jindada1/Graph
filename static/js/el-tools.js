@@ -191,7 +191,7 @@ Vue.component('kris-num-input', {
         <div class="el-tools-item">
             <span class="el-tools-item-head">{{title}}</span>
             <el-input-number v-model="numValue" 
-            @change="numValueChanged" :min="min" :step="step"></el-input-number>
+            @change="numValueChanged" :min="min" :max="max" :step="step"></el-input-number>
         </div>
     `,
     props: {
@@ -203,6 +203,10 @@ Vue.component('kris-num-input', {
         },
         step: {
             default: 1,
+            type: Number
+        },
+        max: {
+            default: Infinity,
             type: Number
         }
     },
@@ -625,5 +629,35 @@ Vue.component('kris-table', {
             this.rows = value;
         }
     }
+})
+
+Vue.component('kris-user', {
+    template: `
+        <span class="kris-icon-container" v-bind:style="'color: ' + iconColor">
+            <i v-if="positive" class="el-icon-user"></i>
+            <i v-else class="el-icon-user-solid"></i>
+        </span>
+    `,
+    props: {
+        positive: {
+            type: Boolean,
+            default: false
+        },
+        diagnosed: {
+            type: Boolean,
+            default: false
+        },
+    },
+    data() {
+        return {
+            hightlight: "#409EFF",
+            normal: "#DDDDDD"
+        }
+    },
+    computed: {
+        iconColor: function () {
+            return this.diagnosed ? this.hightlight : this.normal;
+        }
+    },
 })
 

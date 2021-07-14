@@ -22,6 +22,11 @@ const configurations = {
             label: "联合概率密度",
         },
         {
+            name: "bayes",
+            component: "gh-bayes",
+            label: "贝叶斯",
+        },
+        {
             name: "pi",
             component: "gh-pi",
             label: "圆周率的模拟",

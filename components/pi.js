@@ -11,12 +11,15 @@ Vue.component('gh-pi', {
                 <kris-num-input title="圆的半径" v-model="radius" :step="10" :min="50"></kris-num-input>
                 <kris-num-input title="实验次数" v-model="experimentNum" :step="5" :min="1"></kris-num-input>
                 <kris-button title="开始实验" :tips="tips" :click="run"></kris-button>
+                
                 <el-divider content-position="center">当前实验统计结果</el-divider>
                 <kris-progress title="圆内点占比" :total="result.totalNum" :value="result.insideNum"></kris-progress>
                 <kris-form-item title="圆周率估算值" :value="result.pi"></kris-form-item>
                 <kris-switch title="自动记录统计结果" v-model="storeResult"></kris-switch>
+
                 <el-divider content-position="center">实验结果记录</el-divider>
                 <kris-table v-model="historyResult" :summary="getSummary" :height="300"></kris-table>
+                
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-color-picker v-model="plotConfig.insideColor" title="圆内颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.outsideColor" title="圆外颜色"></kris-color-picker>
