@@ -209,5 +209,10 @@
 .kris-col-bar {
     width: 20px;
     background-color: #79BBFF;
+}
+
+.kris-multibar-col {
+    display: flex;
+    width: fit-content;
     margin: auto;
 }
