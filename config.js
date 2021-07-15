@@ -22,6 +22,11 @@ const configurations = {
             label: "联合概率密度",
         },
         {
+            name: "once",
+            component: "gh-once",
+            label: "至少发生一次",
+        },
+        {
             name: "bayes",
             component: "gh-bayes",
             label: "贝叶斯",
