@@ -105,7 +105,7 @@ Vue.component('kris-slider', {
         <div class="el-tools-item el-tools-item-col">
             <div>
                 <span>{{title}}</span>
-                <span style="float: right;">{{sliderValue}}</span>
+                <span style="float: right;">{{tips}}</span>
             </div>
             <el-slider v-model="sliderValue" @input="sliderValueChanging" :show-tooltip="false"
                 :min="min" :max="max" :step="step">
@@ -126,6 +126,10 @@ Vue.component('kris-slider', {
         step: {
             default: 1,
             type: Number
+        },
+        fix: {
+            default: null,
+            type: Number
         }
     },
     data() {
@@ -141,6 +145,14 @@ Vue.component('kris-slider', {
     watch: {
         value(value) {
             this.sliderValue = value;
+        }
+    },
+    computed: {
+        tips() {
+            if (this.fix) {
+                return this.sliderValue.toFixed(this.fix);
+            }
+            return this.sliderValue
         }
     }
 })
@@ -647,16 +659,18 @@ Vue.component('kris-user', {
             type: Boolean,
             default: false
         },
-    },
-    data() {
-        return {
-            hightlight: "#409EFF",
-            normal: "#DDDDDD"
-        }
+        highlight: {
+            type: String,
+            default: "#409EFF"
+        },
+        normal: {
+            type: String,
+            default: "#DDDDDD"
+        },
     },
     computed: {
         iconColor: function () {
-            return this.diagnosed ? this.hightlight : this.normal;
+            return this.diagnosed ? this.highlight : this.normal;
         }
     },
 })
