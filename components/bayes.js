@@ -25,7 +25,23 @@ Vue.component('gh-bayes', {
                 <kris-slider v-model="plotConfig.maxBarHeight" title="柱的最大高度" :min="100" :max="600" :step="10"></kris-slider>
             </template>
             <template v-slot:right>
-                
+                <el-row class="kris-icons-row">
+                    <el-col :span="12"> 实际为阳性 </el-col>
+                    <el-col :span="12"> 实际为阴性 </el-col>
+                </el-row>
+                <el-row class="kris-icons-row">
+                    <el-col :span="12"> 
+                        <kris-user :positive="false" normal="lightgray"></kris-user>
+                    </el-col>
+                    <el-col :span="12"> 
+                        <kris-user :positive="true" normal="lightgray"></kris-user>
+                    </el-col>
+                </el-row>
+                <el-row class="kris-icons-row">
+                    <el-col :span="12">{{experiment.positive}}</el-col>
+                    <el-col :span="12">{{experiment.total - experiment.positive}}</el-col>
+                </el-row>
+                <el-divider></el-divider>    
                 <el-row class="kris-icons-row">
                     <el-col :span="12"> 诊断为阳性 </el-col>
                     <el-col :span="12"> 诊断为阴性 </el-col>

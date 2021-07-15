@@ -645,7 +645,10 @@ Vue.component('kris-table', {
 
 Vue.component('kris-user', {
     template: `
-        <span class="kris-icon-container" v-bind:style="'color: ' + iconColor">
+        <span class="kris-icon-container" v-bind:style="
+                'color:' + iconColor + ';' +
+                'font-size:' + fontSize + 'px;'
+            ">
             <i v-if="positive" class="el-icon-user"></i>
             <i v-else class="el-icon-user-solid"></i>
         </span>
@@ -667,6 +670,10 @@ Vue.component('kris-user', {
             type: String,
             default: "#DDDDDD"
         },
+        fontSize: {
+            type: Number,
+            default: 100
+        }
     },
     computed: {
         iconColor: function () {
