@@ -1,5 +1,5 @@
 /**
- * math.js v1.0.0
+ * k-math.js v1.0.0
  * (c) 2021 Kris Huang
  * Released under the MIT License.
  */
@@ -93,4 +93,19 @@ var Gaussian = function (mean, std) {
             return f * Math.pow(Math.E, p);
         }
     }
+};
+
+/**
+ * Calculate definite integral of Gaussian function using gauss error function
+ * Reference : https://en.wikipedia.org/wiki/Error_function
+ * 
+ * @param {Float} mean  均值
+ * @param {Float} std   标准差
+ * @param {Float} from  定积分起点
+ * @param {Float} to    定积分终点
+ */
+function definiteIntegralofGaussian(mean, std, from, to) {
+    var std_from = (from - mean) / (std * Math.sqrt(2))
+    var std_to = (to - mean) / (std * Math.sqrt(2))
+    return (math.erf(std_to) - math.erf(std_from)) / 2;
 };

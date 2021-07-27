@@ -405,12 +405,12 @@ Vue.component('kris-num-input-double', {
     template: `
     <div class="el-tools-item">
         <span class="el-tools-item-head">{{title}}</span>
-        <div class="el-tools-item-content">
+        <div class="el-tools-item-content" style="font-size: 14px;">
             <span class="el-tools-item-content-text">{{names[0]}}</span>
-            <el-input v-model="from" class="el-tools-item-tag" placeholder="0" size="medium"
+            <el-input v-model="from" class="el-tools-item-tag" placeholder="0" size="small"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
             <span class="el-tools-item-content-text">{{names[1]}}</span>
-            <el-input v-model="to" class="el-tools-item-tag" placeholder="1" size="medium"
+            <el-input v-model="to" class="el-tools-item-tag" placeholder="1" size="small"
                 @keyup.enter.native="handleInputConfirm" @blur="handleBlur"></el-input>
         </div>
     </div>

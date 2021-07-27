@@ -25,6 +25,9 @@ Vue.component('gh-once', {
                 probabilities: [0.001, 0.25, 0.5, 0.075, 0.1],
                 trialsRange: [1, 100]
             },
+            storageList: [
+                "experiment"
+            ]
         }
     },
     watch: {

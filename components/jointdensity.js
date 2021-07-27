@@ -16,8 +16,13 @@ Vue.component('gh-jointdensity', {
                 <kris-num-input-double v-model="gaussian.y" :names="gaussian.names" title="Y：">
                 </kris-num-input-double>
                 
+                <el-divider content-position="center">切面</el-divider>
+                <kris-num-input title="X" v-model="slices.x" :step="0.01" :min="range.x[0]" :max="range.x[1]"></kris-num-input>
+                <kris-num-input title="Y" v-model="slices.y" :step="0.01" :min="range.y[0]" :max="range.y[1]"></kris-num-input>
+                <kris-switch title="显示切面" v-model="showSlice"></kris-switch>
+
                 <el-divider content-position="center">图像属性</el-divider>
-                <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.05" :max="0.3" :step="0.01">
+                <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.01" :max="0.2" :step="0.01">
                 </kris-slider>
                 <kris-color-picker v-model="plotConfig.maxColor" title="最大值颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.minColor" title="最小值颜色"></kris-color-picker>
@@ -27,10 +32,6 @@ Vue.component('gh-jointdensity', {
                 <kris-slider v-model="eye.x" title="X" :min="-2" :max="2" :step="0.1"></kris-slider>
                 <kris-slider v-model="eye.y" title="Y" :min="-2" :max="2" :step="0.1"></kris-slider>
                 <kris-slider v-model="eye.z" title="Z" :min="-2" :max="2" :step="0.1"></kris-slider>
-                
-                <el-divider content-position="center">函数切片</el-divider>
-                <kris-tag-group v-model="slices.x" title="X 取值"></kris-tag-group>
-                <kris-tag-group v-model="slices.y" title="Y 取值"></kris-tag-group>
             </template>
             <template v-slot:right>
                 <div style="height: 100%;">
@@ -60,8 +61,8 @@ Vue.component('gh-jointdensity', {
                 maxColor: "#409EFF",
             },
             slices: {
-                x: [],
-                y: [],
+                x: 0,
+                y: 0,
             },
             layout: {
                 scene: {
@@ -70,15 +71,44 @@ Vue.component('gh-jointdensity', {
                         projection: {
                             type: this.isPerspective
                         }
-                    }
-                }
+                    },
+                    xaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    },
+                    yaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    },
+                    zaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    },
+                    annotations: []
+                },
+                hoverinfo: 'skip',
+                hovermode: false,
             },
             eye: {
                 x: 1.87,
                 y: 0.88,
                 z: 0.64
             },
-            isPerspective: false,
+            isPerspective: true,
+            showSlice: true,
+            annotation: {
+                textangle: 0,
+                ax: 0,
+                ay: -75,
+                font: {
+                    color: "black",
+                    size: 12
+                },
+                arrowcolor: "black",
+                arrowsize: 3,
+                arrowwidth: 1,
+                arrowhead: 1
+            },
             storageList: [
                 "plotConfig",
                 "range",
@@ -124,6 +154,9 @@ Vue.component('gh-jointdensity', {
         isPerspective(val) {
             this.layout.scene.camera.projection.type = val ? "perspective" : "orthographic"
             this.display();
+        },
+        showSlice() {
+            this.display();
         }
     },
     methods: {
@@ -144,7 +177,29 @@ Vue.component('gh-jointdensity', {
         jointGaussian(x, y) {
             return Gaussian(this.gaussian.x[0], this.gaussian.x[1]).get(x) * Gaussian(this.gaussian.y[0], this.gaussian.y[1]).get(y);
         },
-        plotlyDatas() {
+        shadowLine(lName) {
+            return {
+                x: [],
+                y: [],
+                z: [],
+                type: "scatter3d",
+                mode: "lines",
+                name: lName,
+            }
+        },
+        sliceData() {
+            return {
+                x: [],
+                y: [],
+                z: [],
+                type: 'surface',
+                colorbar: {
+                    ticklabelposition: "inside"
+                },
+                showscale: false // whether or not a colorbar is displayed for this trace.
+            }
+        },
+        surfaceData() {
             return {
                 x: [],
                 y: [],
@@ -154,11 +209,20 @@ Vue.component('gh-jointdensity', {
                 colorbar: {
                     ticklabelposition: "inside"
                 },
-                showscale: false // whether or not a colorbar is displayed for this trace.
+                showscale: false,
+                contours: {
+                    x: { highlight: true },
+                    y: { highlight: true },
+                    z: { highlight: false }
+                },
+                opacity: this.showSlice ? 0.8 : 1
             }
         },
+        annotationData(x, y, z, text) { 
+            return { x, y, z, text } 
+        },
         sliceX(x) {
-            let datas = this.plotlyDatas();
+            let datas = this.sliceData();
             datas.x = [x, x];
             for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
                 datas.y.push(y);
@@ -167,7 +231,7 @@ Vue.component('gh-jointdensity', {
             this.graphs.push(datas);
         },
         sliceY(y) {
-            let datas = this.plotlyDatas();
+            let datas = this.sliceData();
             datas.y = [y, y];
             datas.z = [[], []];
             for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
@@ -182,39 +246,57 @@ Vue.component('gh-jointdensity', {
             if (x < this.gaussian.x[0]) {
                 return;
             }
-            let datas = this.plotlyDatas();
-            datas.type = "scatter3d";
-            datas.mode = "lines";
-            datas.name = `x = ${x}`;
+            let shadowLine = this.shadowLine(`x = ${x}`);
             // let px = x > 0 ? this.range.x[1] : this.range.x[0];
             let px = this.range.x[0];
+            let area = 0;
             for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
-                datas.x.push(px)
-                datas.y.push(y);
-                datas.z.push(this.jointGaussian(x, y))
+                shadowLine.x.push(px)
+                shadowLine.y.push(y);
+                let z = this.jointGaussian(x, y);
+                shadowLine.z.push(z)
+                area += this.plotConfig.precise * z
             }
-            this.graphs.push(datas);
+            this.graphs.push(shadowLine);
+
+            let y = this.gaussian.y[0];
+            let z = this.jointGaussian(x, y);
+            let xyzt = this.annotationData(px, y, z, area);
+            
+            this.layout.scene.annotations.push({
+                ...xyzt,
+                ...this.annotation
+            })
         },
         shadowSliceY(y) {
             // 切片的时候限制 x 和 y 的取值，取值必须大于平均值
             if (y < this.gaussian.y[0]) {
                 return;
             }
-            let datas = this.plotlyDatas();
-            datas.type = "scatter3d";
-            datas.mode = "lines";
-            datas.name = `y = ${y}`;
+            let shadowLine = this.shadowLine(`y = ${y}`);
             // let py = y > 0 ? this.range.y[1] : this.range.y[0];
             let py = this.range.y[0];
+            let area = 0;
             for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
-                datas.x.push(x);
-                datas.y.push(py);
-                datas.z.push(this.jointGaussian(x, y));
+                shadowLine.x.push(x);
+                shadowLine.y.push(py);
+                let z = this.jointGaussian(x, y);
+                shadowLine.z.push(z)
+                area += this.plotConfig.precise * z
             }
-            this.graphs.push(datas);
+            this.graphs.push(shadowLine);
+
+            let x = this.gaussian.x[0];
+            let z = this.jointGaussian(x, y);
+            let xyzt = this.annotationData(x, py, z, area);
+            
+            this.layout.scene.annotations.push({
+                ...xyzt,
+                ...this.annotation
+            })
         },
         calcMainGraph() {
-            let datas = this.plotlyDatas();
+            let datas = this.surfaceData();
             datas.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
             datas.y = this.rangeToArray(this.range.y, this.plotConfig.precise)
             datas.z = [];
@@ -229,10 +311,13 @@ Vue.component('gh-jointdensity', {
         },
         calculateData() {
             this.graphs.length = 0;
-            // this.slices.x.map(x => this.sliceX(x));
-            // this.slices.y.map(y => this.sliceY(y));
-            this.slices.x.map(x => this.shadowSliceX(x));
-            this.slices.y.map(y => this.shadowSliceY(y));
+            this.layout.scene.annotations.length = 0;
+            if (this.showSlice) {
+                this.sliceX(this.slices.x);
+                this.sliceY(this.slices.y);
+                this.shadowSliceX(this.slices.x);
+                this.shadowSliceY(this.slices.y);
+            }
             this.calcMainGraph();
         },
         display() {

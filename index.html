@@ -26,6 +26,8 @@
 <script src="./import/element-ui/element.js"></script>
 <!-- import plotly.js -->
 <script src="import/plotly-latest.min.js" charset="utf-8"></script>
+<!-- import math.js -->
+<script src="import/math.js" charset="utf-8"></script>
 
 <!-- use configurations -->
 <script src="./config.js"></script>
@@ -34,7 +36,7 @@
 <!-- use chart tools -->
 <script src="./static/js/chart.js"></script>
 <!-- use math tools -->
-<script src="./static/js/math.js"></script>
+<script src="./static/js/k-math.js"></script>
 <!-- use components -->
 <script src="./components/pi.js"></script>
 <script src="./components/once.js"></script>
@@ -48,7 +50,7 @@
 <!-- run main scripts -->
 <script>
     const tabs = configurations.tabs;
-    const HOME_PAGE = 4;
+    const HOME_PAGE = 3;
     new Vue({
         el: '#app',
         data: function () {
@@ -62,8 +64,11 @@
                 this.$refs[this.activeTabName][0].init();
             }
         },
-        mounted() {
-            this.$refs[this.activeTabName][0].init();
+        mounted() {            
+            Vue.nextTick(() => {
+                // console.log('next tick in index mounted');
+                this.$refs[this.activeTabName][0].init();
+            })
         }
     })
 </script>
