@@ -17,9 +17,7 @@ Vue.component('gh-jointdensity', {
                 </kris-num-input-double>
                 
                 <el-divider content-position="center">切面</el-divider>
-                <kris-num-input title="X" v-model="slices.x" :step="0.01" :min="range.x[0]" :max="range.x[1]"></kris-num-input>
-                <kris-num-input title="Y" v-model="slices.y" :step="0.01" :min="range.y[0]" :max="range.y[1]"></kris-num-input>
-                <kris-switch title="显示切面" v-model="showSlice"></kris-switch>
+                <kris-switch title="实时切面" v-model="showSlice"></kris-switch>
 
                 <el-divider content-position="center">图像属性</el-divider>
                 <kris-slider v-model="plotConfig.precise" title="绘图误差" :min="0.01" :max="0.2" :step="0.01">
@@ -34,8 +32,12 @@ Vue.component('gh-jointdensity', {
                 <kris-slider v-model="eye.z" title="Z" :min="-2" :max="2" :step="0.1"></kris-slider>
             </template>
             <template v-slot:right>
-                <div style="height: 100%;">
-                    <div :id="plotId()" style="height: 100%;"></div>
+                <div style="height: 100%; display:flex;">
+                    <div :id="plot3D()" style="height: 100%; width:60%;"></div>
+                    <div style="height: 100%; width:40%;">
+                        <div :id="plot2D('xoz')" style="height: 50%;"></div>
+                        <div :id="plot2D('yoz')" style="height: 50%;"></div>
+                    </div>
                 </div>
             </template>
         </kris-layout>
@@ -45,7 +47,11 @@ Vue.component('gh-jointdensity', {
             componentName: "gh-jointdensity",
             updateLock: false,
             inited: false,
-            graphs: [],
+            xyzSurface: {},
+            xozCurve: {},
+            yozCurve: {},
+            xozArea: {},
+            yozArea: {},
             range: {
                 x: [-4, 4],
                 y: [-4, 4]
@@ -64,31 +70,6 @@ Vue.component('gh-jointdensity', {
                 x: 0,
                 y: 0,
             },
-            layout: {
-                scene: {
-                    camera: {
-                        eye: this.eye,
-                        projection: {
-                            type: this.isPerspective
-                        }
-                    },
-                    xaxis: {
-                        showspikes: false,
-                        spikesides: false
-                    },
-                    yaxis: {
-                        showspikes: false,
-                        spikesides: false
-                    },
-                    zaxis: {
-                        showspikes: false,
-                        spikesides: false
-                    },
-                    annotations: []
-                },
-                hoverinfo: 'skip',
-                hovermode: false,
-            },
             eye: {
                 x: 1.87,
                 y: 0.88,
@@ -96,19 +77,7 @@ Vue.component('gh-jointdensity', {
             },
             isPerspective: true,
             showSlice: true,
-            annotation: {
-                textangle: 0,
-                ax: 0,
-                ay: -75,
-                font: {
-                    color: "black",
-                    size: 12
-                },
-                arrowcolor: "black",
-                arrowsize: 3,
-                arrowwidth: 1,
-                arrowhead: 1
-            },
+            firstRender: true,
             storageList: [
                 "plotConfig",
                 "range",
@@ -116,7 +85,7 @@ Vue.component('gh-jointdensity', {
                 "slices",
                 "eye",
                 "isPerspective"
-            ]
+            ],
         }
     },
     watch: {
@@ -146,13 +115,11 @@ Vue.component('gh-jointdensity', {
         },
         eye: {
             handler: function () {
-                this.layout.scene.camera.eye = this.eye
                 this.display();
             },
             deep: true
         },
         isPerspective(val) {
-            this.layout.scene.camera.projection.type = val ? "perspective" : "orthographic"
             this.display();
         },
         showSlice() {
@@ -160,46 +127,64 @@ Vue.component('gh-jointdensity', {
         }
     },
     methods: {
-        plotId() {
-            return this.componentName + "-plot";
+        plot3D() {
+            return this.componentName + "-plot3D";
         },
-        render() {
-            Plotly.newPlot(this.plotId(), this.graphs, this.layout);
-            this.storeSettings()
+        plot2D(id) {
+            return this.componentName + "-plot2D-" + id;
         },
-        rangeToArray(range, step = 1) {
-            var arr = [];
-            for (let num = range[0]; num < range[1]; num += step) {
-                arr.push(num);
-            }
-            return arr;
-        },
-        jointGaussian(x, y) {
-            return Gaussian(this.gaussian.x[0], this.gaussian.x[1]).get(x) * Gaussian(this.gaussian.y[0], this.gaussian.y[1]).get(y);
-        },
-        shadowLine(lName) {
+        layout2D(title, xtitle) {
             return {
-                x: [],
-                y: [],
-                z: [],
-                type: "scatter3d",
-                mode: "lines",
-                name: lName,
-            }
-        },
-        sliceData() {
-            return {
-                x: [],
-                y: [],
-                z: [],
-                type: 'surface',
-                colorbar: {
-                    ticklabelposition: "inside"
+                title: {
+                    text: title,
+                    font: {
+                        size: 14
+                    },
                 },
-                showscale: false // whether or not a colorbar is displayed for this trace.
+                xaxis: {
+                    title: xtitle
+                },
+                yaxis: {
+                    title: 'N',
+                    range: [0, this.jointGaussian(this.gaussian.x[0], this.gaussian.y[0])]
+                },
             }
         },
-        surfaceData() {
+        layout3D() {
+            return {
+                scene: {
+                    camera: {
+                        eye: this.eye,
+                        projection: {
+                            type: this.isPerspective ? "perspective" : "orthographic"
+                        }
+                    },
+                    xaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    },
+                    yaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    },
+                    zaxis: {
+                        showspikes: false,
+                        spikesides: false
+                    }
+                },
+                hoverinfo: 'skip',
+                hovermode: false,
+            }
+        },
+        curve(name) {
+            return {
+                x: [],
+                y: [],
+                mode: 'lines',
+                name
+            }
+        },
+        surface() {
             return {
                 x: [],
                 y: [],
@@ -215,110 +200,86 @@ Vue.component('gh-jointdensity', {
                     y: { highlight: true },
                     z: { highlight: false }
                 },
-                opacity: this.showSlice ? 0.8 : 1
+                opacity: 1
             }
         },
-        annotationData(x, y, z, text) { 
-            return { x, y, z, text } 
+        render() {
+            let xozTitle = `x = ${this.slices.x.toFixed(5)} 的切面，面积为 ${this.xozArea.toFixed(5)}`
+            let yozTitle = `y = ${this.slices.y.toFixed(5)} 的切面，面积为 ${this.yozArea.toFixed(5)}`
+            if (this.firstRender) {
+                Plotly.newPlot(this.plot3D(), [this.xyzSurface], this.layout3D());
+                this.bindHoverEvent(this.plot3D());
+                Plotly.newPlot(this.plot2D('xoz'), [this.xozCurve], this.layout2D(xozTitle, "y"));
+                Plotly.newPlot(this.plot2D('yoz'), [this.yozCurve], this.layout2D(yozTitle, "x"));
+                this.firstRender = false;
+            }
+            Plotly.react(this.plot3D(), [this.xyzSurface], this.layout3D());
+            Plotly.react(this.plot2D('xoz'), [this.xozCurve], this.layout2D(xozTitle, "y"));
+            Plotly.react(this.plot2D('yoz'), [this.yozCurve], this.layout2D(yozTitle, "x"));
+            this.storeSettings()
         },
-        sliceX(x) {
-            let datas = this.sliceData();
-            datas.x = [x, x];
-            for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
-                datas.y.push(y);
-                datas.z.push([this.jointGaussian(x, y), 0])
-            }
-            this.graphs.push(datas);
-        },
-        sliceY(y) {
-            let datas = this.sliceData();
-            datas.y = [y, y];
-            datas.z = [[], []];
-            for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
-                datas.x.push(x);
-                datas.z[0].push(this.jointGaussian(x, y));
-                datas.z[1].push(0);
-            }
-            this.graphs.push(datas);
-        },
-        shadowSliceX(x) {
-            // 切片的时候限制 x 和 y 的取值，取值必须大于平均值
-            if (x < this.gaussian.x[0]) {
-                return;
-            }
-            let shadowLine = this.shadowLine(`x = ${x}`);
-            // let px = x > 0 ? this.range.x[1] : this.range.x[0];
-            let px = this.range.x[0];
-            let area = 0;
-            for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
-                shadowLine.x.push(px)
-                shadowLine.y.push(y);
-                let z = this.jointGaussian(x, y);
-                shadowLine.z.push(z)
-                area += this.plotConfig.precise * z
-            }
-            this.graphs.push(shadowLine);
-
-            let y = this.gaussian.y[0];
-            let z = this.jointGaussian(x, y);
-            let xyzt = this.annotationData(px, y, z, area);
-            
-            this.layout.scene.annotations.push({
-                ...xyzt,
-                ...this.annotation
+        bindHoverEvent(name) {
+            var myPlot = document.getElementById(name)
+            myPlot.on('plotly_hover', (data) => {
+                this.slices.x = data.points[0].x
+                this.slices.y = data.points[0].y
             })
         },
-        shadowSliceY(y) {
-            // 切片的时候限制 x 和 y 的取值，取值必须大于平均值
-            if (y < this.gaussian.y[0]) {
-                return;
+        rangeToArray(range, step = 1) {
+            var arr = [];
+            for (let num = range[0]; num < range[1]; num += step) {
+                arr.push(num);
             }
-            let shadowLine = this.shadowLine(`y = ${y}`);
-            // let py = y > 0 ? this.range.y[1] : this.range.y[0];
+            return arr;
+        },
+        jointGaussian(x, y) {
+            return Gaussian(this.gaussian.x[0], this.gaussian.x[1]).get(x) * Gaussian(this.gaussian.y[0], this.gaussian.y[1]).get(y);
+        },
+        sliceX(x) {
+            let curve = this.curve(`x = ${x}`);
+            let area = 0;
+            for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
+                let z = this.jointGaussian(x, y);
+                curve.x.push(y)
+                curve.y.push(z)
+                area += this.plotConfig.precise * z
+            }
+            this.xozArea = area;
+            this.xozCurve = curve;
+        },
+        sliceY(y) {
+            let curve = this.curve(`y = ${y}`);
             let py = this.range.y[0];
             let area = 0;
             for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
-                shadowLine.x.push(x);
-                shadowLine.y.push(py);
                 let z = this.jointGaussian(x, y);
-                shadowLine.z.push(z)
+                curve.x.push(x);
+                curve.y.push(z)
                 area += this.plotConfig.precise * z
             }
-            this.graphs.push(shadowLine);
-
-            let x = this.gaussian.x[0];
-            let z = this.jointGaussian(x, y);
-            let xyzt = this.annotationData(x, py, z, area);
-            
-            this.layout.scene.annotations.push({
-                ...xyzt,
-                ...this.annotation
-            })
+            this.yozArea = area
+            this.yozCurve = curve
         },
-        calcMainGraph() {
-            let datas = this.surfaceData();
-            datas.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
-            datas.y = this.rangeToArray(this.range.y, this.plotConfig.precise)
-            datas.z = [];
-            for (let y of datas.y) {
+        calcSurface() {
+            let surface = this.surface();
+            surface.x = this.rangeToArray(this.range.x, this.plotConfig.precise)
+            surface.y = this.rangeToArray(this.range.y, this.plotConfig.precise)
+            surface.z = [];
+            for (let y of surface.y) {
                 let rowx = []
-                for (let x of datas.x) {
+                for (let x of surface.x) {
                     rowx.push(this.jointGaussian(x, y));
                 }
-                datas.z.push(rowx);
+                surface.z.push(rowx);
             }
-            this.graphs.push(datas)
+            this.xyzSurface = surface;
         },
         calculateData() {
-            this.graphs.length = 0;
-            this.layout.scene.annotations.length = 0;
             if (this.showSlice) {
                 this.sliceX(this.slices.x);
                 this.sliceY(this.slices.y);
-                this.shadowSliceX(this.slices.x);
-                this.shadowSliceY(this.slices.y);
             }
-            this.calcMainGraph();
+            this.calcSurface();
         },
         display() {
             if (this.updateLock) return;
