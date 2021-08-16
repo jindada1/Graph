@@ -11,7 +11,7 @@ Vue.component('gh-once', {
                 <kris-num-input-range v-model="experiment.trialsRange" title="次数 N" :min="1"></kris-num-input-range>
             </template>
             <template v-slot:right>
-                <div :id="plotId">
+                <div :id="plotId" style="height: 100%">
                 </div>
             </template>
         </kris-layout>
@@ -46,12 +46,15 @@ Vue.component('gh-once', {
     methods: {
         display() {
             var data = this.experiment.probabilities.map(p => this.calcLine(p));
-            Plotly.newPlot(this.plotId, data);
+            Plotly.newPlot(this.plotId, data, {
+                autosize: false,
+                height: 700
+            });
             this.storeSettings()
         },
         calcLine(possibility) {
             let i = this.experiment.trialsRange[0]
-            let x = [], y= []
+            let x = [], y = []
             while (i < this.experiment.trialsRange[1]) {
                 x.push(i)
                 y.push(this.happenAtLeastOnce(possibility, i))

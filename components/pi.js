@@ -7,9 +7,8 @@ Vue.component('gh-pi', {
         <kris-layout ref="frame">
             <template v-slot:left>
                 <el-divider content-position="center">当前实验设置</el-divider>
-                <kris-num-input title="实验点数量" v-model="experiment.pointNum" :step="100" :min="100"></kris-num-input>
+                <kris-num-input title="实验点数量" v-model="experiment.pointNum" :step="100" :min="100" :max="10000"></kris-num-input>
                 <kris-num-input title="圆的半径" v-model="radius" :step="10" :min="50"></kris-num-input>
-                <kris-num-input title="实验次数" v-model="experimentNum" :step="5" :min="1"></kris-num-input>
                 <kris-button title="开始实验" :tips="tips" :click="run"></kris-button>
                 
                 <el-divider content-position="center">当前实验统计结果</el-divider>
@@ -39,7 +38,6 @@ Vue.component('gh-pi', {
             experiment: {
                 pointNum: 1000,
             },
-            experimentNum: 1,
             radius: 280,
             plotConfig: {
                 insideColor: "#FF6D24",
@@ -50,8 +48,7 @@ Vue.component('gh-pi', {
                 "radius",
                 "experiment",
                 "plotConfig",
-                "storeResult",
-                "experimentNum"
+                "storeResult"
             ],
             result: {
                 totalNum: 0,
@@ -86,7 +83,7 @@ Vue.component('gh-pi', {
     },
     computed: {
         tips() {
-            return '进行 ' + (this.experimentNum || 1) + ' 次实验'
+            return '进行 1 次实验'
         },
         getSummary() {
             let avg = "0";
@@ -107,9 +104,7 @@ Vue.component('gh-pi', {
     },
     methods: {
         run() {
-            for (let i = 0; i < this.experimentNum; i++) {
-                this.generatePoints();
-            }
+            this.generatePoints();
             this.display()
         },
         generatePoints() {
