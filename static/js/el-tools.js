@@ -43,6 +43,7 @@ Vue.component('kris-layout', {
             Vue.nextTick(() => {
                 component.updateLock = false;
             })
+            console.log('loadData');
         }
     },
     mounted() {
@@ -645,13 +646,17 @@ Vue.component('kris-table', {
 
 Vue.component('kris-user', {
     template: `
-        <span class="kris-icon-container" v-bind:style="
-                'color:' + iconColor + ';' +
-                'font-size:' + fontSize + 'px;'
-            ">
-            <i v-if="positive" class="el-icon-user"></i>
-            <i v-else class="el-icon-user-solid"></i>
-        </span>
+        <div>
+            <span class="kris-icon-container" v-bind:style="
+                    'color:' + iconColor + ';' +
+                    'font-size:' + fontSize + 'px;'
+                ">
+                <i v-if="positive" class="el-icon-user"></i>
+                <i v-else class="el-icon-user-solid"></i>
+            </span>
+            <div v-if="positive">阴性</div>
+            <div v-else="positive">阳性</div>
+        </div>
     `,
     props: {
         positive: {
@@ -680,5 +685,33 @@ Vue.component('kris-user', {
             return this.diagnosed ? this.highlight : this.normal;
         }
     },
+})
+
+Vue.component('kris-formula', {
+    template: `
+        <div>
+            <span style="display: inline-block;">
+                <div> {{core}} </div>
+                <div> ————— </div>
+                <div> {{core}} + {{other}} </div>
+            </span>
+            <span style="display: inline-block; line-height: 63px; vertical-align: bottom;"> = {{result}}</span>
+        </div>
+    `,
+    props: {
+        core: {
+            type: Number,
+            default: 1
+        },
+        other: {
+            type: Number,
+            default: 1
+        },
+    },
+    computed: {
+        result() {
+            return (100 * this.core / (this.core + this.other)).toFixed(3) + "%";
+        }
+    }
 })
 

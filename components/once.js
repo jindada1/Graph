@@ -11,7 +11,9 @@ Vue.component('gh-once', {
                 <kris-num-input-range v-model="experiment.trialsRange" title="次数 N" :min="1"></kris-num-input-range>
             </template>
             <template v-slot:right>
-                <div :id="plotId" style="height: 100%">
+                <div id="container" style="height: 100%">
+                    <div :id="plotId" style="height: 100%">
+                    </div>
                 </div>
             </template>
         </kris-layout>
@@ -21,6 +23,11 @@ Vue.component('gh-once', {
             componentName: "gh-once",
             updateLock: false,
             inited: false,
+            plotSize: {
+                width: 1000,
+                height: 600,
+            },
+            firstGetSize: true,
             experiment: {
                 probabilities: [0.001, 0.25, 0.5, 0.075, 0.1],
                 trialsRange: [1, 100]
@@ -45,10 +52,13 @@ Vue.component('gh-once', {
     },
     methods: {
         display() {
+            if (this.updateLock) return;
+            console.log('display---');
             var data = this.experiment.probabilities.map(p => this.calcLine(p));
             Plotly.newPlot(this.plotId, data, {
                 autosize: false,
-                height: 700
+                height: this.plotSize.height,
+                width: this.plotSize.width
             });
             this.storeSettings()
         },
@@ -72,9 +82,20 @@ Vue.component('gh-once', {
         storeSettings() {
             localStorage.setItem(this.componentName, JSON.stringify(this.$data))
         },
+        outputsize() {
+            this.plotSize = {
+                width: container.offsetWidth,
+                height: container.offsetHeight * 0.75,
+            }
+            if (this.firstGetSize) {
+                this.firstGetSize = false;
+                this.display();
+            }
+        },
         init() {
+            console.log("init");
             if (this.inited) return;
-            this.display();
+            new ResizeObserver(this.outputsize).observe(container)
             this.inited = true;
         }
     },

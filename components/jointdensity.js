@@ -196,8 +196,16 @@ Vue.component('gh-jointdensity', {
                 },
                 showscale: false,
                 contours: {
-                    x: { highlight: true },
-                    y: { highlight: true },
+                    x: {
+                        highlight: true,
+                        highlightcolor: "blue",
+                        width: 4 
+                    },
+                    y: {
+                        highlight: true,
+                        highlightcolor: "red",
+                        width: 4 
+                    },
                     z: { highlight: false }
                 },
                 opacity: 1
@@ -237,6 +245,9 @@ Vue.component('gh-jointdensity', {
         },
         sliceX(x) {
             let curve = this.curve(`x = ${x}`);
+            curve.line = {
+                color: "blue",
+            }
             let area = 0;
             for (let y = this.range.y[0]; y < this.range.y[1]; y += this.plotConfig.precise) {
                 let z = this.jointGaussian(x, y);
@@ -249,7 +260,9 @@ Vue.component('gh-jointdensity', {
         },
         sliceY(y) {
             let curve = this.curve(`y = ${y}`);
-            let py = this.range.y[0];
+            curve.line = {
+                color: "red",
+            }
             let area = 0;
             for (let x = this.range.x[0]; x < this.range.x[1]; x += this.plotConfig.precise) {
                 let z = this.jointGaussian(x, y);

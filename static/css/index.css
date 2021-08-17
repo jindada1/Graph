@@ -203,12 +203,13 @@
 
 .kris-icons-row {
     text-align: center; 
-    margin: 20px 0;
+    margin: 40px 0;
 }
 
 .kris-col-bar {
     width: 20px;
     background-color: #79BBFF;
+    transition: height 0.25s ease-in;
 }
 
 .kris-multibar-col {
