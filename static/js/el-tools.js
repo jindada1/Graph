@@ -654,8 +654,8 @@ Vue.component('kris-user', {
                 <i v-if="positive" class="el-icon-user"></i>
                 <i v-else class="el-icon-user-solid"></i>
             </span>
-            <div v-if="positive">阴性</div>
-            <div v-else="positive">阳性</div>
+            <div v-if="positive">诊断为阴性</div>
+            <div v-else="positive">诊断为阳性</div>
         </div>
     `,
     props: {

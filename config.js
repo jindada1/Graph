@@ -19,7 +19,7 @@ const configurations = {
         {
             name: "binomial",
             component: "gh-binomial",
-            label: "二项分布基础概念",
+            label: "二项分布的正态逼近模拟",
         },
         {
             name: "coins",
@@ -35,11 +35,6 @@ const configurations = {
             name: "jointdensity",
             component: "gh-jointdensity",
             label: "联合概率密度",
-        },
-        {
-            name: "papermoney",
-            component: "gh-papermoney",
-            label: "选纸币决策",
         },
     ]
 }

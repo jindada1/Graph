@@ -27,8 +27,8 @@ Vue.component('gh-bayes', {
             </template>
             <template v-slot:right>
                 <el-row class="kris-icons-row">
-                    <el-col :span="12"> 诊断为阳性 </el-col>
-                    <el-col :span="12"> 诊断为阴性 </el-col>
+                    <el-col :span="12"> 实际为阳性 </el-col>
+                    <el-col :span="12"> 实际为阴性 </el-col>
                 </el-row>
                 <el-row class="kris-icons-row">
                     <el-col v-for="(dp, index) in order" :key="index" :span="6">
@@ -59,11 +59,11 @@ Vue.component('gh-bayes', {
                 </el-row>
                 <el-row v-if="result.length" class="kris-icons-row">
                     <el-col :span="12"> 
-                        <div style="margin: 16px 0;"> 诊断为阳性，实际是阳性病人的概率 </div>
+                        <div style="margin: 16px 0;"> 实际是阳性，诊断为阳性病人的概率 </div>
                         <kris-formula :core="result[1][0]" :other="result[0][0]"></kris-formula>
                     </el-col>
                     <el-col :span="12"> 
-                        <div style="margin: 16px 0;"> 诊断为阴性，实际是阴性病人的概率 </div>
+                        <div style="margin: 16px 0;"> 实际是阴性，诊断为阴性病人的概率 </div>
                         <kris-formula :core="result[2][0]" :other="result[3][0]"></kris-formula>
                     </el-col>
                 </el-row>
