@@ -691,9 +691,9 @@ Vue.component('kris-formula', {
     template: `
         <div>
             <span style="display: inline-block;">
-                <div> {{core}} </div>
+                <div v-bind:style="'color:' + highlight + ';'"> {{core}} </div>
                 <div> ————— </div>
-                <div> {{core}} + {{other}} </div>
+                <div> <span v-bind:style="'color:' + highlight + ';'"> {{core}} </span> + {{other}} </div>
             </span>
             <span style="display: inline-block; line-height: 63px; vertical-align: bottom;"> = {{result}}</span>
         </div>
@@ -706,6 +706,10 @@ Vue.component('kris-formula', {
         other: {
             type: Number,
             default: 1
+        },
+        highlight: {
+            type: String,
+            default: "#409EFF"
         },
     },
     computed: {

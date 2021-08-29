@@ -18,8 +18,8 @@ Vue.component('gh-bayes', {
                 <kris-button title="开始模拟" tips="根据已有参数模拟一次诊断" :click="display"></kris-button>
             
                 <el-divider content-position="center">图像属性</el-divider>
-                <kris-color-picker v-model="plotConfig.diagnosedColor" title="诊断为阳性的颜色"></kris-color-picker>
-                <kris-color-picker v-model="plotConfig.unDiagnosedColor" title="诊断为阴性的颜色"></kris-color-picker>
+                <kris-color-picker v-model="plotConfig.positiveColor" title="实际为阳性的颜色"></kris-color-picker>
+                <kris-color-picker v-model="plotConfig.unPositiveColor" title="实际为阴性的颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.emulateBarColor" title="模拟结果的颜色"></kris-color-picker>
                 <kris-color-picker v-model="plotConfig.theoryBarColor" title="理论结果的颜色"></kris-color-picker>
                 <kris-slider v-model="plotConfig.barWidth" title="柱的宽度" :min="10" :max="100" :step="1"></kris-slider>
@@ -33,8 +33,8 @@ Vue.component('gh-bayes', {
                 <el-row class="kris-icons-row">
                     <el-col v-for="(dp, index) in order" :key="index" :span="6">
                         <kris-user :diagnosed="dp[0]" :positive="dp[1]" 
-                            :highlight="plotConfig.diagnosedColor" 
-                            :normal="plotConfig.unDiagnosedColor">
+                            :highlight="plotConfig.positiveColor" 
+                            :normal="plotConfig.unPositiveColor">
                         </kris-user>
                     </el-col>
                 </el-row>
@@ -59,12 +59,12 @@ Vue.component('gh-bayes', {
                 </el-row>
                 <el-row v-if="result.length" class="kris-icons-row">
                     <el-col :span="12"> 
-                        <div style="margin: 16px 0;"> 实际是阳性，诊断为阳性病人的概率 </div>
-                        <kris-formula :core="result[1][0]" :other="result[0][0]"></kris-formula>
+                        <div style="margin: 16px 0;"> 诊断为阳性，实际是阳性的概率 </div>
+                        <kris-formula :core="result[1][0]" :other="result[3][0]" :highlight="plotConfig.positiveColor"></kris-formula>
                     </el-col>
                     <el-col :span="12"> 
-                        <div style="margin: 16px 0;"> 实际是阴性，诊断为阴性病人的概率 </div>
-                        <kris-formula :core="result[2][0]" :other="result[3][0]"></kris-formula>
+                        <div style="margin: 16px 0;"> 诊断为阴性，实际是阳性的概率 </div>
+                        <kris-formula :core="result[0][0]" :other="result[2][0]" :highlight="plotConfig.positiveColor"></kris-formula>
                     </el-col>
                 </el-row>
             </template>
@@ -82,8 +82,8 @@ Vue.component('gh-bayes', {
                 PP: 0.9,        // 实际是阳性诊断成阳性的概率
             },
             plotConfig: {
-                diagnosedColor: "#409EFF",
-                unDiagnosedColor: "#005F08",
+                positiveColor: "#409EFF",
+                unPositiveColor: "#005F08",
                 barWidth: 40,
                 maxBarHeight: 300,
                 emulateBarColor: "#925500",
@@ -175,7 +175,7 @@ Vue.component('gh-bayes', {
                 K * this.experiment.NN,
                 (N - K) * this.experiment.PP,
                 (N - K) * this.PN
-            ];
+            ].map((res) => res.toFixed(0));
         },
         divide(num, p) {
             let hit = 0
