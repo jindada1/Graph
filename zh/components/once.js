@@ -53,7 +53,6 @@ Vue.component('gh-once', {
     methods: {
         display() {
             if (this.updateLock) return;
-            console.log('display---');
             var data = this.experiment.probabilities.map(p => this.calcLine(p));
             Plotly.newPlot(this.plotId, data, {
                 autosize: false,
@@ -93,7 +92,7 @@ Vue.component('gh-once', {
             }
         },
         init() {
-            console.log("init");
+            // console.log("init");
             if (this.inited) return;
             new ResizeObserver(this.outputsize).observe(container)
             this.inited = true;
