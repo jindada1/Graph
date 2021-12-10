@@ -2,6 +2,7 @@
 
 概率分布可视化工具
 
+预览：[中文](https://jindada1.github.io/graph/zh/)，[English](https://jindada1.github.io/graph/en/)
 
 
 ## 圆周率估计
