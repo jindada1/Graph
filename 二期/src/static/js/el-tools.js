@@ -211,7 +211,7 @@ Vue.component('kris-num-input', {
         title: String,
         value: Number,
         min: {
-            default: 1,
+            default: -Infinity,
             type: Number
         },
         step: {
@@ -461,7 +461,7 @@ Vue.component('kris-button', {
         <span class="el-tools-item-head"></span>
         <div class="el-tools-item-content">
             <el-tooltip slot="append" effect="light" :content="tips" placement="left">
-                <el-button icon="el-icon-video-play" @click="click">{{title}}</el-button>
+                <el-button @click="click">{{title}}</el-button>
             </el-tooltip>
         </div>
     </div>
@@ -718,7 +718,6 @@ Vue.component('kris-formula', {
         }
     }
 })
-
 
 Vue.component('kris-fraction-input', {
     template: `

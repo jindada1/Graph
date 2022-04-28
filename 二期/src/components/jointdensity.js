@@ -7,10 +7,8 @@ Vue.component('gh-jointdensity', {
                 <kris-num-input-range v-model="range.y" title="y"></kris-num-input-range>
                 
                 <el-divider content-position="center">${Lang.jointdensity.coefficient}</el-divider>
-                <kris-fraction-input v-model="coefficient.x" title="x²">
-                </kris-fraction-input>
-                <kris-fraction-input v-model="coefficient.y" title="y²">
-                </kris-fraction-input>
+                <kris-fraction-input v-model="coefficient.x" title="x²"></kris-fraction-input>
+                <kris-fraction-input v-model="coefficient.y" title="y²"></kris-fraction-input>
                 
                 <el-divider content-position="center">${Lang.jointdensity.slice}</el-divider>
                 <kris-switch title="${Lang.jointdensity.realtime}" v-model="showSlice"></kris-switch>
@@ -290,6 +288,6 @@ Vue.component('gh-jointdensity', {
         }
     },
     mounted() {
-        // this.$refs.frame.loadData(this);
+        this.$refs.frame.loadData(this);
     }
 })

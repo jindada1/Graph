@@ -15,5 +15,8 @@ const Lang = {
         color_of_minval: "最小值颜色",
         is_perspective: "透视视角",
         graph_2D_title: "的切面，面积为",
+    },
+    normal: {
+        label: "总体正态分布"
     }
 }

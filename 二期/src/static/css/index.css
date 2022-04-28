@@ -47,29 +47,44 @@
     background-color: transparent;
 }
 
-.graph-maze {
+.top {
+    height: 40%;
+}
+
+.down {
+    height: 60%;
+}
+
+.columns-container {
+    height: 100%;
     width: fit-content;
 }
 
-.graph-maze-row {
+.columns {
+    height: 100%;
     display: flex;
-    width: 100%;
+    align-items: stretch;
 }
 
-.graph-maze-sticky-head-top {
-    top: 0;
-    position: sticky;
-    position: -webkit-sticky;
-    background-color: white;
-    z-index: 100;
+.column-graph {
+    width: 400px;
 }
 
-.graph-maze-head {
-    width: 50px;
-    flex: none;
+.column {
+    flex-shrink: 0;
+    border-left: black dashed 1px;
+    margin-left: -1px;
+}
+
+.column > div {
     display: flex;
-    justify-content: center;
     align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.column > .graph {
+    height: calc(100% - 110px);
 }
 
 .sticky-left {
@@ -86,72 +101,12 @@
     background-color: white;
 }
 
-.graph-maze-element-container {
-    flex: 1;
-}
-
-.graph-maze-element-left {
-    display: block;
-    margin-right: auto;
-}
-
-.graph-maze-element-center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.graph-maze-element-right {
-    display: block;
-    margin-left: auto;
-}
-
-.graph-paper-money {
-    margin: 5px;
-    width: 200px;
-    height: 100px;
-    position: relative;
-    font-family: fantasy;
-    display: inline-block;
-    background-color: lightgray;
-}
-
-.graph-paper-money-inner {
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
-    display: flex;
-    position: absolute;
-    background-color: white;
-    border: 5px solid rgb(58, 58, 58);
-}
-
-.graph-paper-money-inner > span {
-    margin: 4px;
-    font-size: 20px;
-}
-
-.graph-paper-money-center {
-    flex: 1;
-    display: flex;
-    width: 100%;
-}
-
-.graph-paper-money-center > img {
-    border-radius: 50%;
-    width: 50px;
-    height: 80%;
-    object-fit: cover;
-    margin: auto;
-}
-
 .graph-canvas {
     margin: 60px auto;;
     background-color: #fff;
     box-shadow: 0px 0px 3px 0px gray;
 }
-    
+
 .graph-canvas-container {
     overflow:auto;
     display: flex;
