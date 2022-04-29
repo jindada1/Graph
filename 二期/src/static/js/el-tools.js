@@ -460,9 +460,10 @@ Vue.component('kris-button', {
     <div class="el-tools-item">
         <span class="el-tools-item-head"></span>
         <div class="el-tools-item-content">
-            <el-tooltip slot="append" effect="light" :content="tips" placement="left">
+            <el-tooltip v-if="tips" slot="append" effect="light" :content="tips" placement="left">
                 <el-button @click="click">{{title}}</el-button>
             </el-tooltip>
+            <el-button v-else @click="click">{{title}}</el-button>
         </div>
     </div>
     `,
@@ -473,7 +474,7 @@ Vue.component('kris-button', {
         },
         tips: {
             type: String,
-            default: "Kris is so cool. 😎"
+            default: ""
         },
         click: {
             type: Function,

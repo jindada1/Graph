@@ -55,6 +55,13 @@
     height: 60%;
 }
 
+.tips {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
 .columns-container {
     height: 100%;
     width: fit-content;

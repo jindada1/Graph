@@ -1,40 +1,35 @@
-Vue.component('gh-normal', {
+Vue.component('gh-zeroone', {
     template: `
         <kris-layout ref="frame">
             <template v-slot:left>
-                <el-divider content-position="center">${Lang.normal.section_distribution_name}</el-divider>
-                <kris-num-input title="${Lang.normal.avg}" v-model="experiment.avg" :step="1"></kris-num-input>
-                <kris-num-input title="${Lang.normal.std}" v-model="experiment.std" :step="1"></kris-num-input>
-                <el-divider content-position="center">${Lang.normal.section_experiment_name}</el-divider>
-                <kris-num-input title="${Lang.normal.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input title="${Lang.normal.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
+                <el-divider content-position="center">${Lang.zeroone.section_experiment_name}</el-divider>
+                <kris-num-input title="${Lang.zeroone.p}" v-model="p" :min="0" :max="1" :step="0.01"></kris-num-input>
+                <kris-num-input title="${Lang.zeroone.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zeroone.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
                 <kris-button :title="btnText" :click="calculateNewData"></kris-button>
             
-                <el-divider content-position="center">${Lang.normal.curve_props}</el-divider>
-                <kris-color-picker v-model="curveConfig.lineColor" title="${Lang.normal.curve_color}"></kris-color-picker>
-                <kris-num-input-range v-model="curveConfig.range" title="x"></kris-num-input-range>
-                <kris-slider v-model="curveConfig.precise" title="${Lang.normal.curve_precise}" :min="0.01" :max="0.2" :step="0.01">
-                </kris-slider>
+                <el-divider content-position="center">${Lang.zeroone.distribution_props}</el-divider>
+                <kris-color-picker v-model="distributionConfig.barColor" title="${Lang.zeroone.bars_color}"></kris-color-picker>
                 
-                <el-divider content-position="center">${Lang.normal.bars_props}</el-divider>
-                <kris-color-picker v-model="barConfig.barColor" title="${Lang.normal.bars_color}"></kris-color-picker>
-                <kris-slider v-model="layoutConfig.gap" title="${Lang.normal.bars_gap}"></kris-slider>
+                <el-divider content-position="center">${Lang.zeroone.bars_props}</el-divider>
+                <kris-color-picker v-model="barConfig.barColor" title="${Lang.zeroone.bars_color}"></kris-color-picker>
+                <kris-slider v-model="layoutConfig.gap" title="${Lang.zeroone.bars_gap}"></kris-slider>
             </template>
             <template v-slot:right>
                 <div style="height: 100%; min-height: 720px;">
-                    <div class="top" id="resizeable">
-                        <div :id="plotId('curve')" style="width: 100%; height: 100%;"></div>
+                    <div class="top">
+                        <div :id="plotId('distribution')" style="width: 400px; height: 100%; margin: auto"></div>
                     </div>
                     <div class="down kris-scroll">
                         <div v-if="results.length" class="columns-container">
                             <div class="columns" :style="columnsStyle">
                                 <div v-for="(res, index) in results" :key="index" class="column column-graph">
                                     <div style="padding: 0 40px; height: 110px">
-                                        <el-descriptions :column="2" :title="'${Lang.normal.experiment} ' + index">
-                                            <el-descriptions-item label="${Lang.normal.sample_num}">{{ res.sampleNum }}</el-descriptions-item>
-                                            <el-descriptions-item label="${Lang.normal.avg}">{{ res.avg }}</el-descriptions-item>
-                                            <el-descriptions-item label="${Lang.normal.try_times}">{{ res.epoch }}</el-descriptions-item>
-                                            <el-descriptions-item label="${Lang.normal.variance}">{{ res.variance }}</el-descriptions-item>
+                                        <el-descriptions :column="2" :title="'${Lang.zeroone.experiment} ' + index + ' | p = ' + p">
+                                            <el-descriptions-item label="${Lang.zeroone.sample_num}">{{ res.sampleNum }}</el-descriptions-item>
+                                            <el-descriptions-item label="${Lang.zeroone.avg}">{{ res.avg }}</el-descriptions-item>
+                                            <el-descriptions-item label="${Lang.zeroone.try_times}">{{ res.epoch }}</el-descriptions-item>
+                                            <el-descriptions-item label="${Lang.zeroone.variance}">{{ res.variance }}</el-descriptions-item>
                                         </el-descriptions>
                                     </div>
                                     <div class="graph">
@@ -44,7 +39,7 @@ Vue.component('gh-normal', {
                             </div>
                         </div>
                         <div v-else class="tips">
-                            <el-empty description="${Lang.normal.no_result_tips}">
+                            <el-empty description="${Lang.zeroone.no_result_tips}">
                                 <el-button @click="calculateNewData"> {{btnText}} </el-button>
                             </el-empty>
                         </div>
@@ -55,38 +50,40 @@ Vue.component('gh-normal', {
     `,
     data() {
         return {
-            componentName: "gh-normal",
+            componentName: "gh-zeroone",
             updateLock: false,
             inited: false,
             results: [],
-            btnText: Lang.normal.start_btn_text,
+            btnText: Lang.zeroone.start_btn_text,
+            p: 0.7,
             experiment: {
-                avg: 0,
-                std: 1,
                 sampleNum: 50,  // 样本容量
-                precise: 0.1,   // 采样精度
-                epoch: 50       // 采样次数
+                epoch: 50,      // 采样次数
+                precise: 0.02
             },
             barConfig: {
                 barColor: "#88C3FF",
                 maxBarWidth: 30,
             },
-            curveConfig: {
-                lineColor: "#88C3FF",
-                precise: 0.1,
-                range: [-3, 3]
+            distributionConfig: {
+                barColor: "#88C3FF",
             },
             layoutConfig: {
                 gap: 10,
             },
             storageList: [
                 "experiment",
-                "barConfig"
+                "barConfig",
+                "distributionConfig"
             ]
         }
     },
     watch: {
-        curveConfig: {
+        p() {
+            this.renderTop();
+            this.storeSettings()
+        },
+        distributionConfig: {
             handler: function () {
                 this.renderTop();
                 this.storeSettings()
@@ -95,8 +92,7 @@ Vue.component('gh-normal', {
         },
         barConfig: {
             handler: function () {
-                this.renderBottom();
-                this.storeSettings()
+                this.display();
             },
             deep: true
         },
@@ -121,26 +117,6 @@ Vue.component('gh-normal', {
                 }
             }
         },
-        curveData() {
-            let x = [];
-            let y = [];
-            let [from, to] = this.curveConfig.range;
-            let normalFunc = Gaussian(this.experiment.avg, this.experiment.std)
-            for (let _x = from; _x < to; _x += this.curveConfig.precise) {
-                x.push(_x);
-                y.push(normalFunc.get(_x))
-            }
-            return {
-                x,
-                y,
-                type: 'scatter',
-                mode: 'lines',
-                line: {
-                    color: this.curveConfig.lineColor,
-                    width: 1
-                }
-            }
-        },
         layout(title = "") {
             return {
                 title: {
@@ -152,13 +128,24 @@ Vue.component('gh-normal', {
             }
         },
         renderTop() {
-            Plotly.newPlot(this.plotId('curve'), [this.curveData()], this.layout(Lang.normal.curve_graph_name));
+            const x = [-1, 0, 1, 2]
+            const y = [0, 1 - this.p, this.p, 0]
+            const distribution = {
+                x, y,
+                type: 'bar',
+                marker: {
+                    color: this.distributionConfig.barColor
+                }
+            }
+            Plotly.newPlot(this.plotId('distribution'), [distribution], this.layout(Lang.zeroone.distribution_graph_name), {
+                displayModeBar: false
+            });
         },
         renderBottom() {
             for (let index = 0; index < this.results.length; index++) {
                 const data = this.results[index];
-                const {x, y} = data.bars
-                Plotly.newPlot(this.plotId('bar', index), [this.barData(x, y)], this.layout(Lang.normal.bars_graph_name),  {
+                const {x, y} = data.bars;
+                Plotly.newPlot(this.plotId('bar', index), [this.barData(x, y)], this.layout(Lang.zeroone.bars_graph_name), {
                     displayModeBar: false
                 });
             }
@@ -167,35 +154,20 @@ Vue.component('gh-normal', {
         render() {
             this.renderTop();
             this.renderBottom();
+            this.storeSettings()
         },
         group(num) {
-            //     avg
-            //      ↓
-            // |----.----|
-            // |_precise_|
-            const {avg, precise} = this.experiment
-            const left  = avg - (precise / 2);
-            const right = avg + (precise / 2);
+            const { precise } = this.experiment
+            const group = parseInt(num / precise)
 
-            let group;
-            if (num > left) {
-                group = parseInt((num - left) / precise)
-            }
-            else {
-                group = -parseInt((right - num) / precise)
-            }
-
-            return parseFloat((avg + group * precise).toFixed(2))
+            return parseFloat((group * precise).toFixed(2))
         },
         // 生成样本的采样函数
         sample() {
-            let bm = BoxMuller();
-            const {sampleNum, avg, std} = this.experiment
             let samples = [];
-            
+            const { sampleNum } = this.experiment;
             for (let index = 0; index < sampleNum; index++) {
-                let n = bm(avg, std);
-                samples.push(this.group(n))
+                samples.push(Math.random() > this.p ? 0 : 1)
             }
             return samples
         },
@@ -250,17 +222,8 @@ Vue.component('gh-normal', {
             this.display();
             this.inited = true;
         },
-        observeSize(elm) {
-            const resizeObserver = new ResizeObserver(
-                debounce(()=>{
-                    this.renderTop();
-                })
-            );
-            resizeObserver.observe(elm);
-        }
     },
     mounted() {
         this.$refs.frame.loadData(this);
-        this.observeSize(resizeable)
     }
 })
