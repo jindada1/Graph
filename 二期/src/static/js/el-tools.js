@@ -722,10 +722,14 @@ Vue.component('kris-intervals', {
             type: String,
             default: '#ff7979'
         },
+        scale: {
+            type: Number,
+            default: 1
+        }
     },
     methods: {
         lineStype: function (interval) {
-            const rate = 100 / this.scales;
+            const rate = this.scale * 100 / this.scales;
             const {width, position} = interval;
             const wr = rate * width;
             const lr = (50 + rate * position - 0.5 * wr)

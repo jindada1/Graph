@@ -1,36 +1,35 @@
-Vue.component('gh-normalCI', {
+Vue.component('gh-zerooneCI', {
     template: `
         <kris-layout ref="frame">
             <template v-slot:left>
-                <el-divider content-position="center">${Lang.normalCI.section_distribution_name}</el-divider>
-                <kris-num-input title="${Lang.normalCI.avg}" v-model="experiment.avg" :step="1"></kris-num-input>
-                <kris-num-input title="${Lang.normalCI.std}" v-model="experiment.std" :step="1"></kris-num-input>
-                <el-divider content-position="center">${Lang.normalCI.section_experiment_name}</el-divider>
-                <kris-num-input title="${Lang.normalCI.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input title="${Lang.normalCI.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
+                <el-divider content-position="center">${Lang.zerooneCI.section_distribution_name}</el-divider>
+                <kris-num-input title="${Lang.zerooneCI.p}" v-model="p" :min="0" :max="1" :step="0.01"></kris-num-input>
+                <el-divider content-position="center">${Lang.zerooneCI.section_experiment_name}</el-divider>
+                <kris-num-input title="${Lang.zerooneCI.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zerooneCI.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
                 <kris-button :title="btnText" :click="display"></kris-button>
                 
-                <el-divider content-position="center">${Lang.normalCI.confidence_interval_config}</el-divider>
-                <kris-num-input v-model="graphConfig.level" :min="0.5" :max="0.99" :step="0.01" title="${Lang.normalCI.confidence_level}"></kris-num-input>
-                <kris-button title="${Lang.normalCI.view_table}" type="text" :click="showTable"></kris-button>
-                <el-dialog class="kris-table-dialog" title="${Lang.normalCI.table_name}" :visible.sync="dialogTableVisible">
+                <el-divider content-position="center">${Lang.zerooneCI.confidence_interval_config}</el-divider>
+                <kris-num-input v-model="graphConfig.level" :min="0.5" :max="0.99" :step="0.01" title="${Lang.zerooneCI.confidence_level}"></kris-num-input>
+                <kris-button title="${Lang.zerooneCI.view_table}" type="text" :click="showTable"></kris-button>
+                <el-dialog class="kris-table-dialog" title="${Lang.zerooneCI.table_name}" :visible.sync="dialogTableVisible">
                     <kris-table :title="table.title" :header="table.header" :rows="table.rows"></kris-table>
                 </el-dialog>
 
-                <el-divider content-position="center">${Lang.normalCI.display_props}</el-divider>
-                <kris-color-picker v-model="layoutConfig.safeColor" title="${Lang.normalCI.interval_safe_color}"></kris-color-picker>
-                <kris-slider v-model="layoutConfig.formulaWidth" :min="400" :max="800" title="${Lang.normalCI.formula_size}"></kris-slider>
-                <kris-color-picker v-model="layoutConfig.dangerColor" title="${Lang.normalCI.interval_danger_color}"></kris-color-picker>
-                <kris-slider v-model="layoutConfig.intervalHeight" :max="30" title="${Lang.normalCI.interval_height}"></kris-slider>
-                <kris-slider v-model="layoutConfig.intervalGap" :max="30" title="${Lang.normalCI.interval_gap}"></kris-slider>
+                <el-divider content-position="center">${Lang.zerooneCI.display_props}</el-divider>
+                <kris-color-picker v-model="layoutConfig.safeColor" title="${Lang.zerooneCI.interval_safe_color}"></kris-color-picker>
+                <kris-color-picker v-model="layoutConfig.dangerColor" title="${Lang.zerooneCI.interval_danger_color}"></kris-color-picker>
+                <kris-slider v-model="layoutConfig.formulaWidth" :min="400" :max="800" title="${Lang.zerooneCI.formula_size}"></kris-slider>
+                <kris-slider v-model="layoutConfig.intervalHeight" :max="30" title="${Lang.zerooneCI.interval_height}"></kris-slider>
+                <kris-slider v-model="layoutConfig.intervalGap" :max="30" title="${Lang.zerooneCI.interval_gap}"></kris-slider>
                 <kris-slider v-model="layoutConfig.scale" :min="1" :max="3" :step="0.1" title="${Lang.zerooneCI.interval_scale}"></kris-slider>
             </template>
             <template v-slot:right>
                 <div style="height: 100%;">
                     <div class="formula-holder" style="height: 220px;">
-                        ${ Lang.normalCI.confidence_interval_formula }
-                        <img src='./static/images/normal_confidence_interval.svg' 
-                            alt="${Lang.normalCI.confidence_interval_formula}"
+                        ${ Lang.zerooneCI.confidence_interval_formula }
+                        <img src='./static/images/zeroone_confidence_interval.svg' 
+                            alt="${Lang.zerooneCI.confidence_interval_formula}"
                             :width="layoutConfig.formulaWidth + 'px'"
                         />
                         <div class="equations">
@@ -43,7 +42,7 @@ Vue.component('gh-normalCI', {
                                 <div> {{ alpha }} </div>
                             </div>
                             <div>
-                                <img src='./static/images/t_1-1_2alpha.svg'/>
+                                <img src='./static/images/mu_1-1_2alpha.svg'/>
                                 <div style="margin-bottom: 6px;"> {{ t }} </div>
                             </div>
                         </div>
@@ -58,12 +57,12 @@ Vue.component('gh-normalCI', {
                                 :scale="layoutConfig.scale"
                             ></kris-intervals>
                             <div class="kris-intervals-result-panel">
-                                <div> ${Lang.normalCI.safe_description}{{safeNum}} </div>
-                                <div> ${Lang.normalCI.unsafe_description}{{unsafeNum}} </div>
+                                <div> ${Lang.zerooneCI.safe_description}{{safeNum}} </div>
+                                <div> ${Lang.zerooneCI.unsafe_description}{{unsafeNum}} </div>
                             </div>
                         </div>
                         <div v-else class="tips">
-                            <el-empty description="${Lang.normalCI.no_result_tips}">
+                            <el-empty description="${Lang.zerooneCI.no_result_tips}">
                                 <el-button @click="display"> {{btnText}} </el-button>
                             </el-empty>
                         </div>
@@ -74,7 +73,7 @@ Vue.component('gh-normalCI', {
     `,
     data() {
         return {
-            componentName: "gh-normalCI",
+            componentName: "gh-zerooneCI",
             updateLock: false,
             inited: false,
             table: {
@@ -88,10 +87,9 @@ Vue.component('gh-normalCI', {
             unsafeNum: "",
             alpha: "",
             t: "",
-            btnText: Lang.normalCI.start_btn_text,
+            p: 0.7,
+            btnText: Lang.zerooneCI.start_btn_text,
             experiment: {
-                avg: 0,
-                std: 1,
                 sampleNum: 50,  // 样本容量
                 precise: 0.1,   // 采样精度
                 epoch: 50       // 采样次数
@@ -105,7 +103,7 @@ Vue.component('gh-normalCI', {
                 dangerColor: "#ff7979",
                 intervalHeight: 10,
                 intervalGap: 10,
-                scale: 1.3
+                scale: 2,
             },
             storageList: [
                 "experiment",
@@ -136,13 +134,10 @@ Vue.component('gh-normalCI', {
         },
         // 生成样本的采样函数
         sample() {
-            let bm = BoxMuller();
-            const {sampleNum, avg, std} = this.experiment
             let samples = [];
-            
+            const { sampleNum } = this.experiment;
             for (let index = 0; index < sampleNum; index++) {
-                let n = bm(avg, std);
-                samples.push(n)
+                samples.push(Math.random() > this.p ? 0 : 1)
             }
             return samples
         },
@@ -159,7 +154,7 @@ Vue.component('gh-normalCI', {
         },
         // 采样并计算数据，下游是渲染
         calculateData() {
-            const {epoch, avg} = this.experiment;
+            const {epoch} = this.experiment;
             let results = []
             let safeNum = 0;
             // 采样 epoch 次
@@ -167,21 +162,15 @@ Vue.component('gh-normalCI', {
                 const samples = this.sample();
                 // 计算此次采样的均值
                 const mean = meanOfArray(samples)
-                // 此次采样的方差
-                const variance = samples.reduce((s, x) => s + (mean - x) * (mean - x), 0) / (samples.length - 1);
-                // 标准差
-                const s = Math.sqrt(variance);
-                // 标准化
-                const std_x = (mean - avg) / s;
                 // 一侧的宽度
-                const oneSide = this.t * s / Math.sqrt(samples.length)
+                const oneSide = this.t * Math.sqrt(mean * (1 - mean) / samples.length)
                 // 看看是否包含真值
-                if (std_x - oneSide < avg && avg < std_x + oneSide) {
+                if (mean - oneSide < this.p && this.p < mean + oneSide) {
                     safeNum += 1;
                 }
                 results.push({
                     width: 2 * oneSide,
-                    position: std_x,
+                    position: mean - this.p,
                 })
             }
             this.results = results
