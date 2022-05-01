@@ -2,6 +2,11 @@ const configurations = {
     // 功能标签页
     tabs: [
         {
+            name: "normalCI",
+            component: "gh-normalCI",
+            label: Lang.normalCI.label,
+        },
+        {
             name: "zeroone",
             component: "gh-zeroone",
             label: Lang.zeroone.label,

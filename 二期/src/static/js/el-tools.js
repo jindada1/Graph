@@ -461,9 +461,9 @@ Vue.component('kris-button', {
         <span class="el-tools-item-head"></span>
         <div class="el-tools-item-content">
             <el-tooltip v-if="tips" slot="append" effect="light" :content="tips" placement="left">
-                <el-button @click="click">{{title}}</el-button>
+                <el-button :type="type" @click="click">{{title}}</el-button>
             </el-tooltip>
-            <el-button v-else @click="click">{{title}}</el-button>
+            <el-button :type="type" v-else @click="click">{{title}}</el-button>
         </div>
     </div>
     `,
@@ -471,6 +471,10 @@ Vue.component('kris-button', {
         title: {
             type: String,
             default: "Kris"
+        },
+        type: {
+            type: String,
+            default: ""
         },
         tips: {
             type: String,
@@ -584,141 +588,6 @@ Vue.component('kris-canvas', {
     }
 })
 
-Vue.component('kris-table', {
-    template: `
-        <div class="el-tools-item el-tools-item-col">
-            <div v-if="value.length > 0">
-                <el-row class="kris-table-row kris-table-header" >
-                    <el-col :span="7">总点数</el-col>
-                    <el-col :span="7">圆内点数</el-col>
-                    <el-col :span="10">圆周率估值</el-col>
-                </el-row>
-                <div class="kris-scroll-hidden kris-table-body" :style="'max-height:' + height + 'px'">
-                    <el-row class="kris-table-row" v-for="(data, r) in rows" :key="r">
-                        <el-col :span="7">{{data.totalNum}}</el-col>
-                        <el-col :span="7">{{data.insideNum}}</el-col>
-                        <el-col :span="10">{{data.pi}}</el-col>
-                    </el-row>
-                </div>
-                <el-row class="kris-table-row">
-                    <el-col :span="7">
-                        <el-button type="text" @click="clear">清空记录</el-button>
-                    </el-col>
-                    <el-col :span="7">{{summary.key}}</el-col>
-                    <el-col :span="10">{{summary.value}}</el-col>
-                </el-row>
-            </div>
-            <div v-else class="kris-table-row" style="text-align: center; color: lightgray">
-                暂无数据
-            </div>
-        </div>
-    `,
-    props: {
-        value: Array,
-        height: {
-            type: Number,
-            default: 400
-        },
-        summary: {
-            type: Object,
-            default: {
-                key: "kris is",
-                value: "cool 😎"
-            }
-        }
-    },
-    data() {
-        return {
-            rows: this.value
-        }
-    },
-    methods: {
-        clear() {
-            this.rows = [];
-            this.$emit('input', this.rows);
-        }
-    },
-    watch: {
-        value(value) {
-            this.rows = value;
-        }
-    }
-})
-
-Vue.component('kris-user', {
-    template: `
-        <div>
-            <span class="kris-icon-container" v-bind:style="
-                    'color:' + iconColor + ';' +
-                    'font-size:' + fontSize + 'px;'
-                ">
-                <i v-if="positive" class="el-icon-user"></i>
-                <i v-else class="el-icon-user-solid"></i>
-            </span>
-            <div v-if="positive">诊断为阴性</div>
-            <div v-else="positive">诊断为阳性</div>
-        </div>
-    `,
-    props: {
-        positive: {
-            type: Boolean,
-            default: false
-        },
-        diagnosed: {
-            type: Boolean,
-            default: false
-        },
-        highlight: {
-            type: String,
-            default: "#409EFF"
-        },
-        normal: {
-            type: String,
-            default: "#DDDDDD"
-        },
-        fontSize: {
-            type: Number,
-            default: 100
-        }
-    },
-    computed: {
-        iconColor: function () {
-            return this.diagnosed ? this.highlight : this.normal;
-        }
-    },
-})
-
-Vue.component('kris-formula', {
-    template: `
-        <div>
-            <span style="display: inline-block;">
-                <div v-bind:style="'color:' + highlight + ';'"> {{core}} </div>
-                <div> ————— </div>
-                <div> <span v-bind:style="'color:' + highlight + ';'"> {{core}} </span> + {{other}} </div>
-            </span>
-            <span style="display: inline-block; line-height: 63px; vertical-align: bottom;"> = {{result}}</span>
-        </div>
-    `,
-    props: {
-        core: {
-            type: Number,
-            default: 1
-        },
-        other: {
-            type: Number,
-            default: 1
-        },
-        highlight: {
-            type: String,
-            default: "#409EFF"
-        },
-    },
-    computed: {
-        result() {
-            return (100 * this.core / (this.core + this.other)).toFixed(3) + "%";
-        }
-    }
-})
 
 Vue.component('kris-fraction-input', {
     template: `
@@ -773,4 +642,103 @@ Vue.component('kris-fraction-input', {
             this.to = value[1];
         }
     }
+})
+
+Vue.component('kris-table', {
+    template: `
+        <table class="kris-table" cellspacing="0" cellpadding="0">
+            <thead class="kris-thead">
+                <tr>
+                    <th>{{title}}</th>
+                    <th class="col" v-for="h, index in header" :key="index">
+                        {{h}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="r, i in rows" :key="i">
+                    <th class="row">{{r.h}}</th>
+                    <td v-for="c, i in r.data">
+                        {{c}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    `,
+    props: {
+        title: {
+            type: String,
+            default: ""
+        },
+        header: {
+            type: Array,
+            default: []
+        },
+        rows: {
+            type: Array,
+            default: []
+        },
+    }
+})
+
+
+Vue.component('kris-intervals', {
+    template: `
+        <div class="kris-intervals-container">
+            <div class="kris-intervals-header">
+                <div v-for="s, i in scales" :key="i" class="kris-intervals-header-scale"></div>
+            </div>
+            <div class="kris-intervals-body kris-scroll">
+                <div v-for="(line, i) in intervals" :key="i"
+                    :style="'height: ' + height + 'px; margin-top: ' + gap + 'px;'"
+                >
+                    <div :style="lineStype(line)"></div>
+                </div>
+            </div>
+        </div>
+    `,
+    props: {
+        scales: {
+            type: Number,
+            default: 2
+        },
+        height: {
+            type: Number,
+            default: 10
+        },
+        gap: {
+            type: Number,
+            default: 10
+        },
+        intervals: {
+            type: Array,
+            default: []
+        },
+        hittedColor: {
+            type: String,
+            default: '#79BBFF'
+        },
+        unhittedColor: {
+            type: String,
+            default: '#ff7979'
+        },
+    },
+    methods: {
+        lineStype: function (interval) {
+            const rate = 100 / this.scales;
+            const {width, position} = interval;
+            const wr = rate * width;
+            const lr = (50 + rate * position - 0.5 * wr)
+            let bg = this.hittedColor;
+            if (lr > 50 || lr + wr < 50) {
+                bg = this.unhittedColor
+            }
+            return {
+                height: "100%",
+                width: wr + "%",
+                marginLeft: lr + "%",
+                backgroundColor: bg
+            }
+        },
+    },
 })

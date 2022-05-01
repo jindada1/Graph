@@ -22,7 +22,7 @@ Vue.component('gh-normal', {
             </template>
             <template v-slot:right>
                 <div style="height: 100%; min-height: 720px;">
-                    <div class="top" id="resizeable">
+                    <div class="top" :id="plotId('resizeable')">
                         <div :id="plotId('curve')" style="width: 100%; height: 100%;"></div>
                     </div>
                     <div class="down kris-scroll">
@@ -81,7 +81,9 @@ Vue.component('gh-normal', {
             },
             storageList: [
                 "experiment",
-                "barConfig"
+                "barConfig",
+                "curveConfig",
+                "layoutConfig",
             ]
         }
     },
@@ -247,10 +249,12 @@ Vue.component('gh-normal', {
         },
         init() {
             if (this.inited) return;
+            this.observeSize()
             this.display();
             this.inited = true;
         },
-        observeSize(elm) {
+        observeSize() {
+            const elm = document.getElementById(this.plotId('resizeable'));
             const resizeObserver = new ResizeObserver(
                 debounce(()=>{
                     this.renderTop();
@@ -261,6 +265,5 @@ Vue.component('gh-normal', {
     },
     mounted() {
         this.$refs.frame.loadData(this);
-        this.observeSize(resizeable)
     }
 })
