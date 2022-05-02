@@ -19,8 +19,8 @@ Vue.component('gh-normalCI', {
 
                 <el-divider content-position="center">${Lang.normalCI.display_props}</el-divider>
                 <kris-color-picker v-model="layoutConfig.safeColor" title="${Lang.normalCI.interval_safe_color}"></kris-color-picker>
-                <kris-slider v-model="layoutConfig.formulaWidth" :min="400" :max="800" title="${Lang.normalCI.formula_size}"></kris-slider>
                 <kris-color-picker v-model="layoutConfig.dangerColor" title="${Lang.normalCI.interval_danger_color}"></kris-color-picker>
+                <kris-slider v-model="layoutConfig.formulaWidth" :min="400" :max="800" title="${Lang.normalCI.formula_size}"></kris-slider>
                 <kris-slider v-model="layoutConfig.intervalHeight" :max="30" title="${Lang.normalCI.interval_height}"></kris-slider>
                 <kris-slider v-model="layoutConfig.intervalGap" :max="30" title="${Lang.normalCI.interval_gap}"></kris-slider>
                 <kris-slider v-model="layoutConfig.scale" :min="1" :max="3" :step="0.1" title="${Lang.zerooneCI.interval_scale}"></kris-slider>
