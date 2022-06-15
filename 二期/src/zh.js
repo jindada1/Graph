@@ -19,7 +19,7 @@ const Lang = {
     normal: {
         label: "总体正态分布-样本均值直方图",
         section_distribution_name: "总体正态分布",
-        avg: "均值",
+        avg: "样本均值",
         std: "标准差",
         section_experiment_name: "实验设置",
         sample_num: "样本容量",
@@ -33,7 +33,7 @@ const Lang = {
         bars_gap: "列间距",
         bars_graph_name: "样本均值的直方图",
         experiment: "实验",
-        variance: "方差",
+        variance: "样本方差",
         start_btn_text: "开始实验并记录结果",
         no_result_tips: "没有实验结果展示",
     },
