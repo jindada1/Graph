@@ -12,7 +12,8 @@ Vue.component('gh-normal', {
             
                 <el-divider content-position="center">${Lang.normal.curve_props}</el-divider>
                 <kris-color-picker v-model="curveConfig.lineColor" title="${Lang.normal.curve_color}"></kris-color-picker>
-                <kris-num-input-range v-model="curveConfig.range" title="x"></kris-num-input-range>
+                <kris-num-input-range v-model="curveConfig.range" title="x ${Lang.normal.curve_range}"></kris-num-input-range>
+                <kris-num-input-range v-model="curveConfig.xbarRange" title="x̄ ${Lang.normal.curve_range}"></kris-num-input-range>
                 <kris-slider v-model="curveConfig.precise" title="${Lang.normal.curve_precise}" :min="0.01" :max="0.2" :step="0.01">
                 </kris-slider>
                 
@@ -22,8 +23,9 @@ Vue.component('gh-normal', {
             </template>
             <template v-slot:right>
                 <div style="height: 100%; min-height: 720px;">
-                    <div class="top" :id="plotId('resizeable')">
-                        <div :id="plotId('curve')" style="width: 100%; height: 100%;"></div>
+                    <div class="top" style="display:flex" :id="plotId('resizeable')">
+                        <div :id="plotId('curve-left')" style="width: 50%; height: 100%;"></div>
+                        <div :id="plotId('curve-right')" style="width: 50%; height: 100%;"></div>
                     </div>
                     <div class="down kris-scroll">
                         <div v-if="results.length" class="columns-container">
@@ -74,7 +76,8 @@ Vue.component('gh-normal', {
             curveConfig: {
                 lineColor: "#88C3FF",
                 precise: 0.1,
-                range: [-3, 3]
+                range: [-3, 3],
+                xbarRange: [-0.5, 0.5],
             },
             layoutConfig: {
                 gap: 10,
@@ -143,6 +146,27 @@ Vue.component('gh-normal', {
                 }
             }
         },
+        curve2Data() {
+            let x = [];
+            let y = [];
+            let [from, to] = this.curveConfig.xbarRange;
+            const std = this.experiment.std / Math.sqrt(this.experiment.sampleNum)
+            let normalFunc = Gaussian(this.experiment.avg, std)
+            for (let _x = from; _x < to; _x += this.curveConfig.precise) {
+                x.push(_x);
+                y.push(normalFunc.get(_x))
+            }
+            return {
+                x,
+                y,
+                type: 'scatter',
+                mode: 'lines',
+                line: {
+                    color: this.curveConfig.lineColor,
+                    width: 1
+                }
+            }
+        },
         layout(title = "") {
             return {
                 title: {
@@ -154,7 +178,8 @@ Vue.component('gh-normal', {
             }
         },
         renderTop() {
-            Plotly.newPlot(this.plotId('curve'), [this.curveData()], this.layout(Lang.normal.curve_graph_name));
+            Plotly.newPlot(this.plotId('curve-left'), [this.curveData()], this.layout(Lang.normal.curve_graph_name));
+            Plotly.newPlot(this.plotId('curve-right'), [this.curve2Data()], this.layout(Lang.normal.curve_2_graph_name));
         },
         renderBottom() {
             for (let index = 0; index < this.results.length; index++) {
