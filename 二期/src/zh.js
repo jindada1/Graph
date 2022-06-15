@@ -113,7 +113,7 @@ const Lang = {
         no_result_tips: "没有实验结果展示",
     },
     zerooneCI: {
-        label: "0 1 分布-置信区间",
+        label: "0 1 分布-p 的置信区间",
         section_distribution_name: "总体 0 1 分布",
         p: 'p',
         section_experiment_name: "实验设置",

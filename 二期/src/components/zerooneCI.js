@@ -5,8 +5,8 @@ Vue.component('gh-zerooneCI', {
                 <el-divider content-position="center">${Lang.zerooneCI.section_distribution_name}</el-divider>
                 <kris-num-input title="${Lang.zerooneCI.p}" v-model="p" :min="0" :max="1" :step="0.01"></kris-num-input>
                 <el-divider content-position="center">${Lang.zerooneCI.section_experiment_name}</el-divider>
-                <kris-num-input title="${Lang.zerooneCI.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input title="${Lang.zerooneCI.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zerooneCI.sample_num}" v-model="experiment.sampleNum" :min="0" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zerooneCI.try_times}" v-model="experiment.epoch" :min="0" :step="100"></kris-num-input>
                 <kris-button :title="btnText" :click="display"></kris-button>
                 
                 <el-divider content-position="center">${Lang.zerooneCI.confidence_interval_config}</el-divider>
@@ -43,7 +43,7 @@ Vue.component('gh-zerooneCI', {
                             </div>
                             <div>
                                 <img src='./static/images/mu_1-1_2alpha.svg'/>
-                                <div style="margin-bottom: 6px;"> {{ t }} </div>
+                                <div style="margin-bottom: 6px;"> ={{ t }} </div>
                             </div>
                         </div>
                     </div>

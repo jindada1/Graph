@@ -4,8 +4,8 @@ Vue.component('gh-zeroone', {
             <template v-slot:left>
                 <el-divider content-position="center">${Lang.zeroone.section_experiment_name}</el-divider>
                 <kris-num-input title="${Lang.zeroone.p}" v-model="p" :min="0" :max="1" :step="0.01"></kris-num-input>
-                <kris-num-input title="${Lang.zeroone.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input title="${Lang.zeroone.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zeroone.sample_num}" v-model="experiment.sampleNum" :min="0" :step="10"></kris-num-input>
+                <kris-num-input title="${Lang.zeroone.try_times}" v-model="experiment.epoch" :min="0" :step="10"></kris-num-input>
                 <kris-button :title="btnText" :click="calculateNewData"></kris-button>
             
                 <el-divider content-position="center">${Lang.zeroone.distribution_props}</el-divider>

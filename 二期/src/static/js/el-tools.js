@@ -201,10 +201,17 @@ Vue.component('kris-progress', {
 
 Vue.component('kris-num-input', {
     template: `
-        <div class="el-tools-item">
-            <span class="el-tools-item-head">{{title}}</span>
-            <el-input-number v-model="numValue" 
-            @change="numValueChanged" :min="min" :max="max" :step="step"></el-input-number>
+        <div>
+            <div class="el-tools-item">
+                <span class="el-tools-item-head">{{title}}</span>
+                <el-input-number 
+                    v-model="numValue" @change="numValueChanged" 
+                    :min="min" :max="max" :step="step"
+                ></el-input-number>
+            </div>
+            <div class="el-tools-item-tips">
+                取值范围：{{fmtRange()}}，步长：{{step}}
+            </div>
         </div>
     `,
     props: {
@@ -230,8 +237,16 @@ Vue.component('kris-num-input', {
     },
     methods: {
         numValueChanged(val) {
-            this.$emit('input', val);
-        }
+            if (val >= this.min && val <= this.max) {
+                this.$emit('input', val);
+            }
+            else {
+                this.$message.error("输入应在范围 " + this.fmtRange() + " 内");
+            }
+        },
+        fmtRange() {
+            return "[" + (this.min === -Infinity ? "-∞" : this.min) + ", " + (this.max === Infinity ? "+∞" : this.max) + "]"
+        },
     },
     watch: {
         value(value) {

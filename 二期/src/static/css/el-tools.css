@@ -3,6 +3,13 @@
     display: flex;
 }
 
+.el-tools-item-tips {
+    color: gray;
+    font-size: 14px;
+    text-align: right;
+    padding-bottom: 20px
+}
+
 .el-tools-item-col {
     flex-direction: column;
 }
