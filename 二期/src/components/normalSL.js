@@ -203,7 +203,6 @@
                 const right = this.t
                 if (left < right) {
                     a += 1
-                    console.log(left, right);
                 }
             }
             this.result.a = a

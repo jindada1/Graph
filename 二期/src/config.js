@@ -2,19 +2,9 @@ const configurations = {
     // 功能标签页
     tabs: [
         {
-            name: "normalSL",
-            component: "gh-normalSL",
-            label: Lang.normalSL.label,
-        },
-        {
-            name: "zerooneCI",
-            component: "gh-zerooneCI",
-            label: Lang.zerooneCI.label,
-        },
-        {
-            name: "normalCI",
-            component: "gh-normalCI",
-            label: Lang.normalCI.label,
+            name: "jointdensity",
+            component: "gh-jointdensity",
+            label: Lang.jointdensity.label,
         },
         {
             name: "zeroone",
@@ -22,14 +12,24 @@ const configurations = {
             label: Lang.zeroone.label,
         },
         {
+            name: "zerooneCI",
+            component: "gh-zerooneCI",
+            label: Lang.zerooneCI.label,
+        },
+        {
             name: "normal",
             component: "gh-normal",
             label: Lang.normal.label,
         },
         {
-            name: "jointdensity",
-            component: "gh-jointdensity",
-            label: Lang.jointdensity.label,
+            name: "normalCI",
+            component: "gh-normalCI",
+            label: Lang.normalCI.label,
+        },
+        {
+            name: "normalSL",
+            component: "gh-normalSL",
+            label: Lang.normalSL.label,
         },
     ]
 }

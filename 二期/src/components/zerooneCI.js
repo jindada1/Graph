@@ -57,6 +57,7 @@ Vue.component('gh-zerooneCI', {
                                 :scale="layoutConfig.scale"
                             ></kris-intervals>
                             <div class="kris-intervals-result-panel">
+                                <div> ${Lang.normalCI.safe_frequency}{{safeRate}} </div>
                                 <div> ${Lang.zerooneCI.safe_description}{{safeNum}} </div>
                                 <div> ${Lang.zerooneCI.unsafe_description}{{unsafeNum}} </div>
                             </div>
@@ -124,6 +125,12 @@ Vue.component('gh-zerooneCI', {
             },
             deep: true
         },
+    },
+    computed: {
+        safeRate() {
+            const r = 100 * this.safeNum / (this.safeNum + this.unsafeNum)
+            return r.toFixed(2) + '%'
+        }
     },
     methods: {
         plotId(name, id = "") {
