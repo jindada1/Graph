@@ -2,6 +2,8 @@ const Lang = {
     tools: {
         zero_denominator_error: "分母不能为零",
         no_number_input: "请输入正确的数字",
+        range: "取值范围",
+        step: "步长",
     },
     jointdensity: {
         label: "联合概率密度",

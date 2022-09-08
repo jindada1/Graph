@@ -26,10 +26,10 @@ const configurations = {
             component: "gh-normalCI",
             label: Lang.normalCI.label,
         },
-        {
-            name: "normalSL",
-            component: "gh-normalSL",
-            label: Lang.normalSL.label,
-        },
+        // {
+        //     name: "normalSL",
+        //     component: "gh-normalSL",
+        //     label: Lang.normalSL.label,
+        // },
     ]
 }

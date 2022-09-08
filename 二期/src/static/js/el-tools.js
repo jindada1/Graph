@@ -210,7 +210,7 @@ Vue.component('kris-num-input', {
                 ></el-input-number>
             </div>
             <div class="el-tools-item-tips">
-                取值范围：{{fmtRange()}}，步长：{{step}}
+                ${Lang.tools.range}: {{fmtRange()}}, ${Lang.tools.step} : {{step}}
             </div>
         </div>
     `,
