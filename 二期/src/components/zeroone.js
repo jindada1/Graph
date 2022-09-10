@@ -202,7 +202,7 @@ Vue.component('gh-zeroone', {
             const {sampleNum, epoch} = this.experiment;
             const samples = this.multiSamples();
             const avg = meanOfArray(samples).toFixed(2);
-            const variance = (samples.reduce((s, x) => s + (avg - x) * (avg - x), 0) / (samples.length - 1)).toFixed(9);
+            const variance = (samples.reduce((s, x) => s + (avg - x) * (avg - x), 0) / (samples.length - 1)).toFixed(3);
             const {x, y} = this.toBars(samples);
             const bars = {x, y};
             this.results.push({avg, variance, bars, sampleNum, epoch})

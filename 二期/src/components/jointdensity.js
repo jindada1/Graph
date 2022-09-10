@@ -22,8 +22,11 @@ Vue.component('gh-jointdensity', {
             </template>
             <template v-slot:right>
                 <div style="height: 100%; display:flex;">
-                    <div :id="plot3D()" style="height: 100%; width:60%;"></div>
-                    <div style="height: 100%; width:40%;">
+                    <div style="height: 100%; width: 60%;">
+                        <div :id="formula()" style="height: 120px;" class="formula-container"></div>
+                        <div :id="plot3D()" style="height: calc(100% - 120px);"></div>
+                    </div>
+                    <div style="height: 100%; width: 40%;">
                         <div :id="plot2D('xoz')" style="height: 50%;"></div>
                         <div :id="plot2D('yoz')" style="height: 50%;"></div>
                     </div>
@@ -103,6 +106,9 @@ Vue.component('gh-jointdensity', {
         }
     },
     methods: {
+        formula() {
+            return this.componentName + "formula-output"
+        },
         plot3D() {
             return this.componentName + "-plot3D";
         },
@@ -174,12 +180,12 @@ Vue.component('gh-jointdensity', {
                     x: {
                         highlight: true,
                         highlightcolor: "blue",
-                        width: 4 
+                        width: 4
                     },
                     y: {
                         highlight: true,
                         highlightcolor: "red",
-                        width: 4 
+                        width: 4
                     },
                     z: { highlight: false }
                 },
@@ -273,10 +279,39 @@ Vue.component('gh-jointdensity', {
         },
         display() {
             if (this.updateLock) return;
+            this.updateFormula();
             this.calculateData();
             Vue.nextTick(() => {
                 this.render();
             })
+        },
+        updateFormula() {
+            const rx = this.range.x;
+            const ry = this.range.y;
+            const cx = this.coefficient.x;
+            const cy = this.coefficient.y;
+            
+            var input = `
+                f(x, y) = \\begin{cases}
+                        \\frac{${cx[0]}}{${cx[1]}}x^{2} + \\frac{${cy[0]}}{${cy[1]}}y^{2} & \\text{if} ${rx[0]} < x < ${rx[1]}, ${ry[0]} < y < ${ry[1]} \\\\
+                        0 & \\text{else}
+                        \\end{cases}
+                `.trim();
+            output = document.getElementById(this.formula());
+            output.innerHTML = "";
+
+            MathJax.texReset();
+            var options = MathJax.getMetricsFor(output);
+
+            MathJax.tex2svgPromise(input, options)
+                .then(function (node) {
+                    output.appendChild(node);
+                    MathJax.startup.document.clear();
+                    MathJax.startup.document.updateDocument();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                })
         },
         storeSettings() {
             localStorage.setItem(this.componentName, JSON.stringify(this.$data))

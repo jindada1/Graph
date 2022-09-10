@@ -111,6 +111,7 @@ const Lang = {
         distribution_graph_name: "Distribution",
         bars_props: "Histogram",
         bars_color: "color of bars",
+        bars_gap: "gap of bars",
         bars_graph_name: "Histogram of sample means",
         experiment: "Experiment",
         variance: "sample variance",

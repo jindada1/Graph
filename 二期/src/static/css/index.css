@@ -265,3 +265,10 @@ body:not(.nohover) .kris-table tbody tr:hover {
     line-height: 40px;
     padding-right: 20px;
 }
+
+.formula-container {
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    font-size: 20px;
+}
