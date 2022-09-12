@@ -21,7 +21,7 @@ const Lang = {
     normal: {
         label: "Normal-Histogram of sample means",
         section_distribution_name: "Distribution",
-        avg: "sample mean",
+        avg: "the average of sample mean",
         std: "standard deviation",
         section_experiment_name: "Experiment",
         sample_num: "sample size",
@@ -37,7 +37,7 @@ const Lang = {
         bars_gap: "gap between bars",
         bars_graph_name: "Histogram of sample means",
         experiment: "experiment",
-        variance: "sample variance",
+        variance: "the average of sample variance",
         start_btn_text: "Run",
         no_result_tips: "there is no result",
     },

@@ -31,15 +31,15 @@ Vue.component('gh-normal', {
                         <div v-if="results.length" class="columns-container">
                             <div class="columns" :style="columnsStyle">
                                 <div v-for="(res, index) in results" :key="index" class="column column-graph">
-                                    <div style="padding: 0 40px; height: 110px">
-                                        <el-descriptions :column="2" :title="'${Lang.normal.experiment} ' + index">
+                                    <div style="padding: 0 40px; height: 200px">
+                                        <el-descriptions :column="1" :title="'${Lang.normal.experiment} ' + index">
                                             <el-descriptions-item label="${Lang.normal.sample_num}">{{ res.sampleNum }}</el-descriptions-item>
                                             <el-descriptions-item label="${Lang.normal.avg}">{{ res.avg }}</el-descriptions-item>
                                             <el-descriptions-item label="${Lang.normal.try_times}">{{ res.epoch }}</el-descriptions-item>
                                             <el-descriptions-item label="${Lang.normal.variance}">{{ res.variance }}</el-descriptions-item>
                                         </el-descriptions>
                                     </div>
-                                    <div class="graph">
+                                    <div style="height: calc(100% - 200px);">
                                         <div :id="plotId('bar', index)" style="width: 100%; height: 100%;"></div>
                                     </div>
                                 </div>
