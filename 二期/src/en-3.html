@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualization of Probability Distribution</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="../../import/element-ui/index.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./static/css/index.css" />
+    <link rel="stylesheet" type="text/css" href="./static/css/el-tools.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <el-tabs
+        v-model="activeTabName"
+        :stretch="true"
+        :lazy="true"
+        @tab-click="tabClicked"
+      >
+        <el-tab-pane
+          v-for="tab in tabs"
+          :key="tab.label"
+          :label="tab.label"
+          :name="tab.name"
+        >
+          <component :is="tab.component" :ref="tab.name"></component>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </body>
+
+  <!-- import Vue before Element -->
+  <script src="../../import/vue.js"></script>
+  <!-- import JavaScript -->
+  <script src="../../import/element-ui/index.js"></script>
+  <!-- import plotly.js -->
+  <script src="../../import/plotly-latest.min.js" charset="utf-8"></script>
+  <!-- import math.js -->
+  <script src="../../import/math.js" charset="utf-8"></script>
+  <!-- import jstat.js -->
+  <script src="../../import/jstat.min.js" charset="utf-8"></script>
+  <!-- import MathJax -->
+  <script src="../../import/tex-svg.js" id="MathJax-script"></script>
+
+  <!-- select language -->
+  <script src="./en.js"></script>
+  <!-- use custom element-ui widgets -->
+  <script src="static/js/el-tools.js"></script>
+  <!-- use chart tools -->
+  <script src="./static/js/chart.js"></script>
+  <!-- use math tools -->
+  <script src="./static/js/k-math.js"></script>
+  <!-- utils -->
+  <script src="./static/js/utils.js"></script>
+  <!-- use components -->
+  <script src="./components/zerooneCI.js"></script>
+
+  <!-- run main scripts -->
+  <script>
+    const configurations = {
+      // 功能标签页
+      tabs: [
+        {
+          name: "zerooneCI",
+          component: "gh-zerooneCI",
+          label: Lang.zerooneCI.label,
+        },
+      ],
+    };
+    // localStorage 的键
+    const KEY_HOME = "HOME-EN-3";
+    const KEY_VERSION = "VERSION";
+
+    // 版本哈希
+    const VERSION = "20220912";
+    const DEFAULT_HOME_PAGE = 0;
+
+    const tabs = configurations.tabs;
+
+    let homePage = tabs[DEFAULT_HOME_PAGE].name;
+
+    function checkStorageHash() {
+      const v = localStorage.getItem(KEY_VERSION);
+      if (v && v === VERSION) {
+        homePage = localStorage.getItem(KEY_HOME);
+      } else {
+        // 清空之前的缓存
+        localStorage.clear();
+        localStorage.setItem(KEY_VERSION, VERSION);
+        localStorage.setItem(KEY_HOME, homePage);
+      }
+    }
+
+    checkStorageHash();
+
+    new Vue({
+      el: "#app",
+      data: function () {
+        return {
+          tabs: tabs,
+          activeTabName: homePage,
+        };
+      },
+      methods: {
+        tabClicked() {
+          this.$refs[this.activeTabName][0].init();
+          localStorage.setItem(KEY_HOME, this.activeTabName);
+        },
+      },
+      mounted() {
+        Vue.nextTick(() => {
+          // console.log('next tick in index mounted');
+          this.$refs[this.activeTabName][0].init();
+        });
+      },
+    });
+  </script>
+</html>

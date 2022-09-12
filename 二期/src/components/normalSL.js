@@ -7,7 +7,7 @@
                 <kris-form-item title="${Lang.normalSL.alternative_hypotheses}" :value="'μ ≠ ' + experiment.avg.toString()" :step="1"></kris-form-item>
                 <el-divider content-position="center">${Lang.normalSL.section_experiment_name}</el-divider>
                 <kris-num-input title="${Lang.normalSL.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input v-model="graphConfig.level" :min="0.5" :max="0.99" :step="0.01" title="${Lang.normalSL.significant_level}"></kris-num-input>
+                <kris-num-input v-model="graphConfig.level" :min="0.01" :max="0.05" :step="0.01" title="${Lang.normalSL.significant_level}"></kris-num-input>
                 <kris-num-input title="${Lang.normalSL.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
                 <kris-button title="${Lang.normalSL.view_table}" type="text" :click="showTable"></kris-button>
                 <el-dialog class="kris-table-dialog" title="${Lang.normalSL.table_name}" :visible.sync="dialogTableVisible">
@@ -31,7 +31,7 @@
                         <div style="justify-content: space-between" class="equations">
                             <div>
                                 <img src='./static/images/1-alpha.svg' />
-                                <div> {{graphConfig.level}} </div>
+                                <div> {{1 - graphConfig.level}} </div>
                             </div>
                             <div>
                                 <img src='./static/images/1-1_2alpha.svg' />
