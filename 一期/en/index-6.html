@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualization of Probability Distribution</title>
-    <link rel="stylesheet" type="text/css" href="../../import/element-ui/index.css">
+    <link rel="stylesheet" type="text/css" href="../../import/element-ui/element.css">
     <link rel="stylesheet" type="text/css" href="./static/css/index.css">
     <link rel="stylesheet" type="text/css" href="./static/css/el-tools.css">
 </head>
@@ -23,18 +23,12 @@
 <!-- import Vue before Element -->
 <script src="../../import/vue.js"></script>
 <!-- import JavaScript -->
-<script src="../../import/element-ui/index.js"></script>
+<script src="../../import/element-ui/element.js"></script>
 <!-- import plotly.js -->
 <script src="../../import/plotly-latest.min.js" charset="utf-8"></script>
 <!-- import math.js -->
 <script src="../../import/math.js" charset="utf-8"></script>
-<!-- import jstat.js -->
-<script src="../../import/jstat.min.js" charset="utf-8"></script>
-<!-- import MathJax -->
-<script src="../../import/tex-svg.js" id="MathJax-script"></script>
 
-<!-- select language -->
-<script src="./en.js"></script>
 <!-- use configurations -->
 <script src="./config.js"></script>
 <!-- use custom element-ui widgets -->
@@ -43,58 +37,30 @@
 <script src="./static/js/chart.js"></script>
 <!-- use math tools -->
 <script src="./static/js/k-math.js"></script>
-<!-- utils -->
-<script src="./static/js/utils.js"></script>
 <!-- use components -->
-<script src="./components/normal-en.js"></script>
-<script src="./components/zeroone-en.js"></script>
-<script src="./components/normalCI.js"></script>
-<script src="./components/normalSL.js"></script>
-<script src="./components/zerooneCI.js"></script>
+<script src="./components/pi.js"></script>
+<script src="./components/once.js"></script>
+<script src="./components/coins.js"></script>
+<script src="./components/bayes.js"></script>
+<script src="./components/hundred.js"></script>
+<script src="./components/binomial.js"></script>
 <script src="./components/jointdensity.js"></script>
 
 <!-- run main scripts -->
 <script>
-    // localStorage 的键
-    const KEY_HOME = 'HOME'
-    const KEY_VERSION = 'VERSION'
-    
-    // 版本哈希
-    const VERSION = '20221002'
-    const DEFAULT_HOME_PAGE = 0;
-
-    const tabs = configurations.tabs;
-
-    let homePage = tabs[DEFAULT_HOME_PAGE].name;
-
-    function checkStorageHash() {
-
-        const v = localStorage.getItem(KEY_VERSION)
-        if (v && v === VERSION && localStorage.getItem(KEY_HOME)) {
-            homePage = localStorage.getItem(KEY_HOME)
-        }
-        else {
-            // 清空之前的缓存
-            localStorage.clear();
-            localStorage.setItem(KEY_VERSION, VERSION)
-            localStorage.setItem(KEY_HOME, homePage)
-        }
-    }
-
-    checkStorageHash();
-    
+    const tabs = configurations.tabs.slice(5, 6);
+    const HOME_PAGE = 0;
     new Vue({
         el: '#app',
         data: function () {
             return {
                 tabs: tabs,
-                activeTabName: homePage
+                activeTabName: tabs.length ? tabs[HOME_PAGE].name : null
             }
         },
         methods: {
             tabClicked() {
                 this.$refs[this.activeTabName][0].init();
-                localStorage.setItem(KEY_HOME, this.activeTabName)
             }
         },
         mounted() {            

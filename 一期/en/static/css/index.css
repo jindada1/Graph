@@ -217,3 +217,11 @@
     width: fit-content;
     margin: auto;
 }
+
+.water-mark {
+    position: absolute;
+    bottom: 0;
+    color: gray;
+    left: 28px;
+    bottom: 4px;
+}

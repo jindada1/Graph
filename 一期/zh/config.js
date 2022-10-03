@@ -38,3 +38,5 @@ const configurations = {
         },
     ]
 }
+
+document.body.innerHTML += '<div class="water-mark">made by tongji</div>';

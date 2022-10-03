@@ -80,7 +80,7 @@ const Lang = {
         formula_description: "双边检验原假设成立时：",
         display_props: "展示设置",
         formula_size: "公式大小",
-        view_table: "查看标准正态分布表",
+        view_table: "查看 t 分布表",
         table_name: "标准正态分布表",
         result_btn_text: "开始实验",
         result1_title: "当原假设成立时",

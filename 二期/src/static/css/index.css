@@ -199,7 +199,8 @@
     border: none;
 }
 
-.kris-table td, .kris-table th {
+.kris-table td,
+.kris-table th {
     padding: 10px;
     position: relative;
 }
@@ -230,7 +231,7 @@ body:not(.nohover) .kris-table tbody tr:hover {
     width: 100%;
 }
 
-.equations > div {
+.equations>div {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -271,4 +272,12 @@ body:not(.nohover) .kris-table tbody tr:hover {
     align-items: center;
     padding-left: 32px;
     font-size: 20px;
+}
+
+.water-mark {
+    position: absolute;
+    bottom: 0;
+    color: gray;
+    left: 28px;
+    bottom: 4px;
 }

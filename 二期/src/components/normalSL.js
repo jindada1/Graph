@@ -7,7 +7,7 @@
                 <kris-form-item title="${Lang.normalSL.alternative_hypotheses}" :value="'μ ≠ ' + experiment.avg.toString()" :step="1"></kris-form-item>
                 <el-divider content-position="center">${Lang.normalSL.section_experiment_name}</el-divider>
                 <kris-num-input title="${Lang.normalSL.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
-                <kris-num-input v-model="graphConfig.level" :min="0.01" :max="0.05" :step="0.01" title="${Lang.normalSL.significant_level}"></kris-num-input>
+                <kris-num-input v-model="graphConfig.level" :min="0.01" :max="0.5" :step="0.01" title="${Lang.normalSL.significant_level}"></kris-num-input>
                 <kris-num-input title="${Lang.normalSL.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
                 <kris-button title="${Lang.normalSL.view_table}" type="text" :click="showTable"></kris-button>
                 <el-dialog class="kris-table-dialog" title="${Lang.normalSL.table_name}" :visible.sync="dialogTableVisible">
@@ -76,17 +76,17 @@
                                 </el-button>
                             </template>
                             <el-descriptions-item label="${Lang.normalSL.result2_accept}">
-                                {{result.a}}
+                                {{result.b}}
                             </el-descriptions-item>
                             <el-descriptions-item label="${Lang.normalSL.result2_deny}">
-                                {{experiment.epoch - result.a}}
+                                {{experiment.epoch - result.b}}
                             </el-descriptions-item>
                             <el-descriptions-item label="${Lang.normalSL.result2_frequency}">
-                                {{((experiment.epoch - result.a) / 100).toFixed(2)}}
+                                {{((experiment.epoch - result.b) / 100).toFixed(2)}}
                             </el-descriptions-item>
                             <el-descriptions-item label="注">
                                 ${Lang.normalSL.result2_tips_1}
-                                {{experiment.avg}}
+                                {{experiment.avg * 1.1}}
                                 ${Lang.normalSL.result2_tips_2} 
                                 {{Math.abs(experiment.avg) / 10}}
                                 ${Lang.normalSL.result2_tips_3} 
@@ -153,20 +153,19 @@
         showTable() {
             this.dialogTableVisible = true
         },
-        calcStd() {
+        calcStd(avg) {
             // 方差为 |均值| / 10
-            let avg = this.experiment.avg;
-            avg = avg < 0 ? -avg : avg;
-            return Math.sqrt(avg / 10);
+            let _avg = avg < 0 ? -avg : avg;
+            return Math.sqrt(_avg / 10);
         },
         // 生成样本的采样函数
-        sample() {
+        sample(avg) {
             let bm = BoxMuller();
-            const {sampleNum, avg} = this.experiment
+            const { sampleNum } = this.experiment
             let samples = [];
             
             for (let index = 0; index < sampleNum; index++) {
-                let n = bm(avg, this.calcStd());
+                let n = bm(avg, this.calcStd(avg));
                 samples.push(n)
             }
             return samples
@@ -184,11 +183,15 @@
         },
         // 采样并计算数据，下游是渲染
         calculateData() {
+            this.calcA();
+            this.calcB();
+        },
+        calcA(){
             const {epoch, avg} = this.experiment;
             let a = 0;
             // 采样 epoch 次
             for (let index = 0; index < epoch; index++) {
-                const samples = this.sample();
+                const samples = this.sample(avg);
                 // 计算此次采样的均值
                 const mean = meanOfArray(samples)
                 // 此次采样的方差
@@ -205,7 +208,34 @@
                     a += 1
                 }
             }
-            this.result.a = a
+            this.result.a = a;
+        },
+        calcB(){
+            const { epoch } = this.experiment;
+            const avg = this.experiment.avg * 1.1;
+            console.log(avg);
+
+            let b = 0;
+            // 采样 epoch 次
+            for (let index = 0; index < epoch; index++) {
+                const samples = this.sample(avg);
+                // 计算此次采样的均值
+                const mean = meanOfArray(samples)
+                // 此次采样的方差
+                const variance = samples.reduce((s, x) => s + (mean - x) * (mean - x), 0) / (samples.length - 1);
+                // 标准差
+                const s = Math.sqrt(variance);
+                // 标准化
+                const std_mean = math.abs(mean - avg) / s;
+                // 左边
+                const left = Math.sqrt(samples.length) * std_mean;
+                // 右边
+                const right = this.t
+                if (left < right) {
+                    b += 1
+                }
+            }
+            this.result.b = b;
         },
         // 反向查找正态分布表
         searchTable(num) {
