@@ -47,7 +47,7 @@
   <script src="../../import/tex-svg.js" id="MathJax-script"></script>
 
   <!-- select language -->
-  <script src="./zh.js"></script>
+  <script src="./en.js"></script>
   <!-- use custom element-ui widgets -->
   <script src="static/js/el-tools.js"></script>
   <!-- use chart tools -->
@@ -57,7 +57,7 @@
   <!-- utils -->
   <script src="./static/js/utils.js"></script>
   <!-- use components -->
-  <script src="./components/normalCI.js"></script>
+  <script src="./components/zerooneSL.js"></script>
 
   <!-- run main scripts -->
   <script>
@@ -65,14 +65,14 @@
       // 功能标签页
       tabs: [
         {
-          name: "normalCI",
-          component: "gh-normalCI",
-          label: Lang.normalCI.label,
+          name: "zerooneSL",
+          component: "gh-zerooneSL",
+          label: Lang.zerooneSL.label,
         },
       ],
     };
     // localStorage 的键
-    const KEY_HOME = "HOME-5";
+    const KEY_HOME = "HOME-7";
     const KEY_VERSION = "VERSION";
 
     // 版本哈希
