@@ -8,7 +8,6 @@
                 <el-divider content-position="center">${Lang.zerooneSL.section_experiment_name}</el-divider>
                 <kris-num-input title="${Lang.zerooneSL.sample_num}" v-model="experiment.sampleNum" :step="10"></kris-num-input>
                 <kris-num-input v-model="graphConfig.level" :min="0.01" :max="0.5" :step="0.01" title="${Lang.zerooneSL.significant_level}"></kris-num-input>
-                <kris-num-input title="${Lang.zerooneSL.try_times}" v-model="experiment.epoch" :step="10"></kris-num-input>
                 <kris-button title="${Lang.zerooneSL.view_table}" type="text" :click="showTable"></kris-button>
                 <el-dialog class="kris-table-dialog" title="${Lang.zerooneSL.table_name}" :visible.sync="dialogTableVisible">
                     <kris-table :title="table.title" :header="table.header" :rows="table.rows"></kris-table>
@@ -126,6 +125,13 @@
         }
     },
     watch: {
+        experiment: {
+            handler: function () {
+                this.experiment.epoch = this.experiment.sampleNum
+                this.display()
+            },
+            deep: true
+        },
         graphConfig: {
             handler: function (v) {
                 this.calculateParams()
