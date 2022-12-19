@@ -55,7 +55,7 @@
                                 {{experiment.epoch - result.a}}
                             </el-descriptions-item>
                             <el-descriptions-item label="${Lang.zerooneSL.result1_frequency}">
-                                {{((experiment.epoch - result.a) / 100).toFixed(2)}}
+                                {{(result.a / experiment.sampleNum).toFixed(2)}}
                             </el-descriptions-item>
                             <el-descriptions-item label="注">
                                 ${Lang.zerooneSL.result1_tips_1}
@@ -77,7 +77,7 @@
                                 {{experiment.epoch - result.b}}
                             </el-descriptions-item>
                             <el-descriptions-item label="${Lang.zerooneSL.result2_frequency}">
-                                {{((experiment.epoch - result.b) / 100).toFixed(2)}}
+                                {{(result.b / experiment.sampleNum).toFixed(2)}}
                             </el-descriptions-item>
                             <el-descriptions-item label="注">
                                 ${Lang.zerooneSL.result2_tips_1}
@@ -189,7 +189,7 @@
                 const left = Math.sqrt(samples.length) * temp;
                 // 右边
                 const right = this.t
-                if (left > right) {
+                if (left < right) {
                     a += 1
                 }
             }
@@ -210,7 +210,7 @@
                 const left = Math.sqrt(samples.length) * temp;
                 // 右边
                 const right = this.t
-                if (left > right) {
+                if (left < right) {
                     b += 1
                 }
             }
