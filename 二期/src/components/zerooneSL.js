@@ -55,7 +55,7 @@
                                 {{experiment.epoch - result.a}}
                             </el-descriptions-item>
                             <el-descriptions-item label="${Lang.zerooneSL.result1_frequency}">
-                                {{(result.a / experiment.sampleNum).toFixed(2)}}
+                                {{((experiment.epoch - result.a) / experiment.sampleNum).toFixed(2)}}
                             </el-descriptions-item>
                             <el-descriptions-item label="注">
                                 ${Lang.zerooneSL.result1_tips_1}
